@@ -140,7 +140,6 @@ router.get('/userinfo', async (req, res) => {
 router.get('/user/by-id/:id', async (req, res) => {
     // Extract the id from the request
     const { id } = req.params;
-    console.log(id, req.params.id);
     // Instantiate a new authentication service
     const authService = new auth();
 

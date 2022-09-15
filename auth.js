@@ -492,10 +492,8 @@ class Auth {
             throw new Error('Invalid id');
         }
 
-        console.log(id);
         // Ensure the id is a number
         id = Number(id);
-        console.log(id, typeof id, isNaN(id));
 
         // Get the user from the database
         const user = await this.prisma.user.findUnique({
@@ -503,7 +501,6 @@ class Auth {
                 id: id
             }
         });
-        console.log(user);
 
         // Ensure the user exists
         if (!user) {
