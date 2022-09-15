@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  // Required fields
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String
+  pseudo      String   @unique
+
+  // Optional fields (or auto-generated)
+  firstName   String?
+  lastName    String?
+  createdAt   DateTime @default(now())
+  // 0 = user, 1 = moderator, 2 = admin
+  role        Int      @default(0)
+  scripts     Script[]
+  Ratings     Rating[]
+  Reviews     Review[]
+  Tokens      Token[]
+  // Settings
+  publicEmail Boolean  @default(false)
+  publicName  Boolean  @default(false)
+
+  // Profile
+  avatar      String?
+  bio         String?
+  website     String?
+  location    String?
+  birthday    DateTime?
+}
+
+model Token {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  token     String   @unique
+  userId    Int
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model Script {
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  ratings   Rating[]
+  reviews   Review[]
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  value     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  script    Script   @relation(fields: [scriptId], references: [id])
+  scriptId  Int
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  script    Script   @relation(fields: [scriptId], references: [id])
+  scriptId  Int
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+}
