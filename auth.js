@@ -331,10 +331,14 @@ class Auth {
      * @name deleteExpiredTokens
      */
     async deleteExpiredTokens() {
+        // Tokens are valid for Date.now() + TokenExpirationTime, so, to work with createdAt, we need to substract TokenExpirationTime
+        const date = Date.now() - TokenExpirationTime;
+        // Convert the date to the "DateTime" format of Prisma
+        const dateToPrisma = new Date(date).toISOString();
         const tokens = await this.prisma.token.findMany({
             where: {
-                expirationDate: {
-                    lte: new Date() + TokenExpirationTime
+                createdAt: {
+                    lt: dateToPrisma
                 }
             }
         });
@@ -344,9 +348,7 @@ class Auth {
         await this.prisma.token.deleteMany({
             where: {
                 createdAt: {
-                    // We can't be sure that the token is expired, so we delete all the tokens that were created before the current date + the expiration time
-                    // This way, we are sure that the token is expired, but some tokens may keep existing some time after their expiration date
-                    lte: new Date() + TokenExpirationTime
+                    lt: dateToPrisma
                 }
             }
         });
@@ -777,11 +779,21 @@ class Auth {
 
 }
 
-// Run deleteExpiredTokens every 5 minutes
-setInterval(() => {
+async function deleteExpiredTokensHelper() {
     let authService = new Auth();
-    authService.deleteExpiredTokens();
-}, 300000);
+    let deleted = await authService.deleteExpiredTokens();
+    if (deleted) {
+        console.log(`Deleted ${deleted} expired tokens`);
+    }
+    // Delete the auth service instance to free up memory
+    authService = null;
+}
+
+// Run deleteExpiredTokens every 5 minutes
+setInterval(deleteExpiredTokensHelper, 300000);
+
+// Run deleteExpiredTokens on startup
+deleteExpiredTokensHelper();
 
 // Close the database connection when the process is closed
 process.on('SIGINT', () => {
