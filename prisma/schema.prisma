@@ -12,10 +12,10 @@ datasource db {
 
 model User {
   // Required fields
-  id          Int      @id @default(autoincrement())
-  email       String   @unique
-  password    String
-  pseudo      String   @unique
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+  pseudo   String @unique
 
   // Optional fields (or auto-generated)
   firstName   String?
@@ -32,11 +32,11 @@ model User {
   publicName  Boolean  @default(false)
 
   // Profile
-  avatar      String?
-  bio         String?
-  website     String?
-  location    String?
-  birthday    DateTime?
+  avatar   String?
+  bio      String?
+  website  String?
+  location String?
+  birthday DateTime?
 }
 
 model Token {
@@ -48,15 +48,24 @@ model Token {
 }
 
 model Script {
+  id         Int        @id @default(autoincrement())
+  name       String
+  code       String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  // We want that a script can have multiple authors
+  authors    User[]
+  // We want that a script can have multiple categories
+  categories Category[]
+  ratings    Rating[]
+  reviews    Review[]
+}
+
+model Category {
   id        Int      @id @default(autoincrement())
   name      String
-  code      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  ratings   Rating[]
-  reviews   Review[]
+  scripts   Script[]
 }
 
 model Rating {
