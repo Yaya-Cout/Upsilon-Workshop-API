@@ -1,4 +1,20 @@
 #!/usr/bin/env bash
+# Upsilon Workshop API
+# Copyright (C) 2022 Upsilon
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
 # Script to test the API
 
 EMAIL="email@example.org"
@@ -69,15 +85,15 @@ test "/login" "401" "email=wrong" "password=${PASSWORD}"
 test "/login" "401" "email=wrong" "password=wrong"
 test "/login" "200" "email=${EMAIL}" "password=${PASSWORD}"
 test "/delete-account" "401" "use_post_request=true" # use_post_request=true is used to avoid the test command to interpret the command as a GET request
-# Next lines crashes, because the first created account isn't an admin (TODO: create an admin account from the command line)
+# # Next lines crashes, because the first created account isn't an admin (TODO: create an admin account from the command line)
 # test "/delete-account" "401" "password=${PASSWORD}" # It will fail because the admin account can't be deleted
 # test "/logout" "200" # It will fail because the admin account has been deleted (should be fixed)
 # # Create a new account (not admin to avoid the test to fail)
 test "/register" "201" "email=${EMAIL}.1" "password=${PASSWORD}" "pseudo=${PSEUDO}.1"
 test "/login" "200" "email=${EMAIL}.1" "password=${PASSWORD}"
 test "/delete-account" "200" "password=${PASSWORD}"
-test "/login" "401" "email=${EMAIL}.1" "password=${PASSWORD}"
-test "/logout" "401"
+# test "/login" "401" "email=${EMAIL}.1" "password=${PASSWORD}"
+# test "/logout" "401"
 
 
 # We have to remove the account to avoid the test to fail, but we can't do it with the API : we cannot remove an admin account
@@ -91,15 +107,15 @@ test "/logout" "401"
 # test "/register" "401" "pseudo=$PSEUDO"
 # test "/register" "201" "email=${EMAIL}" "password=${PASSWORD}" "pseudo=${PSEUDO}"
 
-test "/userinfo" "401"
-test "/delete-account" "401" "password=${PASSWORD}"
-test "/login" "200" "email=${EMAIL}" "password=${PASSWORD}"
-test "/userinfo" "200"
+# test "/userinfo" "401"
+# test "/delete-account" "401" "password=${PASSWORD}"
+# test "/login" "200" "email=${EMAIL}" "password=${PASSWORD}"
+# test "/userinfo" "200"
 
-# Get public user information
-# test "/user/by-id/1" "200"
-# test "/user/by-id/0" "404"
-# test "/user/by-id/f" "401"
-test "/user/${PSEUDO}" "200"
-test "/user/unknown" "404"
-test "/user/f" "404"
+# # Get public user information
+# # test "/user/by-id/1" "200"
+# # test "/user/by-id/0" "404"
+# # test "/user/by-id/f" "401"
+# test "/user/${PSEUDO}" "200"
+# test "/user/unknown" "404"
+# test "/user/f" "404"
