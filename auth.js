@@ -600,6 +600,47 @@ class Auth {
     }
 
     /**
+     * Middleware to check if the user is authenticated
+     * @param {object} req - The request object
+     * @param {object} res - The response object
+     * @param {function} next - The next function
+     * @public
+     * @memberof Auth
+     * @method
+     * @name authMiddleware
+     * @throws {Error} - If the token is not valid
+     * @throws {Error} - If the user is not found
+     * @throws {Error} - If the token is not found
+     * @throws {Error} - If the token is expired
+     * @async
+     */
+    async authMiddleware(req, res, next) {
+        // Get the token from the request
+        const token = req.cookies.authToken;
+        // Ensure the token is not empty or undefined
+        if (!token) {
+            // If the token is not found, return an error
+            return res.status(401).json({
+                error: 'Token not found'
+            });
+        }
+        // Get the user from the token
+        let user;
+        try {
+            user = await this.getUserFromToken(token);
+        } catch (error) {
+            // If the token is not valid, return an error
+            return res.status(401).json({
+                error: error.message
+            });
+        }
+        // Add the user to the request
+        req.user = user;
+        // Call the next function
+        next();
+    }
+
+    /**
      * Function to generate a token
      * @param {string} user - The user object to generate the token from
      * @returns {Promise} - The token object

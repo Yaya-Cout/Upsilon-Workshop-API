@@ -6,7 +6,7 @@ const router = express.Router({ mergeParams: true });
 const auth = require('../../auth');
 const authService = new auth();
 
-router.get('/', async (req, res) => {
+router.get('/', authService.authMiddleware, async (req, res) => {
     // Call the getPrivateUser function from the auth module
     try {
         const user = await authService.getPrivateUser(req.cookies.authToken);

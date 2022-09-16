@@ -6,7 +6,7 @@ const router = express.Router({ mergeParams: true });
 const auth = require('../../auth');
 const authService = new auth();
 
-router.post('/', async (req, res) => {
+router.post('/', authService.authMiddleware, async (req, res) => {
     // Get the token from the cookie
     const token = req.cookies.authToken;
     // Get the password from the body
