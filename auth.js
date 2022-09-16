@@ -192,7 +192,7 @@ class Auth {
             throw new Error('Invalid token');
         }
         // Get the user from the token
-        const user = await this.getUserFromToken(token);
+        const user = await this.getUserByToken(token);
         // Check if the user exists
         if (!user) {
             throw new Error('User not found');
@@ -328,7 +328,7 @@ class Auth {
         }
 
         // Get the user from the token
-        const user = await this.getUserFromToken(token);
+        const user = await this.getUserByToken(token);
         // Check if the user exists
         if (!user) {
             throw new Error('User not found');
@@ -421,13 +421,13 @@ class Auth {
      * @public
      * @memberof Auth
      * @method
-     * @name getUserFromToken
+     * @name getUserByToken
      * @throws {Error} - If the token is not valid
      * @throws {Error} - If the user is not found
      * @throws {Error} - If the token is not found
      * @throws {Error} - If the token is expired
      */
-    async getUserFromToken(token) {
+    async getUserByToken(token) {
         // Ensure the token is valid
         if (!this.verifyToken(token)) {
             throw new Error('Token is not valid');
@@ -573,7 +573,7 @@ class Auth {
      */
     async getUserRoleFromToken(token) {
         // Get the user from the token
-        const user = await this.getUserFromToken(token);
+        const user = await this.getUserByToken(token);
         // Get the user's role
         return this.getUserRole(user);
     }
@@ -627,8 +627,9 @@ class Auth {
         // Get the user from the token
         let user;
         try {
-            user = await this.getUserFromToken(token);
+            user = await this.getUserByToken(token);
         } catch (error) {
+            console.error(error);
             // If the token is not valid, return an error
             return res.status(401).json({
                 error: error.message
@@ -708,7 +709,7 @@ class Auth {
             throw new Error('First name is not valid');
         }
         // Get the user from the token
-        const user = await this.getUserFromToken(token);
+        const user = await this.getUserByToken(token);
         // Edit the user's first name
         const updatedUser = await this.prisma.user.update({
             where: {
@@ -745,7 +746,7 @@ class Auth {
             throw new Error('Last name is not valid');
         }
         // Get the user from the token
-        const user = await this.getUserFromToken(token);
+        const user = await this.getUserByToken(token);
         // Edit the user's last name
         const updatedUser = await this.prisma.user.update({
             where: {
