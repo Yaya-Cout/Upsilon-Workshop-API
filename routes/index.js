@@ -167,7 +167,7 @@ router.get('/user/:pseudo', async (req, res) => {
 
     // Call the getUserByPseudo function from the auth module
     try {
-        user = await authService.getUserFromPseudo(pseudo);
+        user = await authService.getUserByPseudo(pseudo);
     }
     catch (err) {
         // If the user is not found, return a 404 instead of a 401

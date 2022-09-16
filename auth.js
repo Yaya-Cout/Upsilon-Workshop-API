@@ -14,6 +14,8 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 const crypto = require('crypto');
@@ -472,7 +474,7 @@ class Auth {
      * @throws {Error} - If the username is not found
      * @throws {Error} - If the username is not valid
      */
-    async getUserFromPseudo(username) {
+    async getUserByPseudo(username) {
         // Get the user from the database
         const user = await this.prisma.user.findUnique({
             where: {
@@ -503,8 +505,7 @@ class Auth {
      * @throws {Error} - If the id is not valid
      * @throws {Error} - If the id is not a number
      */
-    // TODO: Rename to getUserById
-    async getUserFromId(id) {
+    async getUserById(id) {
         // Check if the id is a valid number
         if (isNaN(id)) {
             throw new Error('Invalid id');
@@ -593,7 +594,7 @@ class Auth {
      */
     async getUserRoleFromUsername(username) {
         // Get the user from the username
-        const user = await this.getUserFromPseudo(username);
+        const user = await this.getUserByPseudo(username);
         // Get the user's role
         return this.getUserRole(user);
     }
