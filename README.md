@@ -62,5 +62,5 @@ have any questions, you can contact me on GitHub.
 
 ## License
 
-This project is licensed under the GPL-3.0 License. See the [LICENSE](LICENSE)
+This project is licensed under the AGPL-3.0 License. See the [LICENSE](LICENSE)
 file for more details.
