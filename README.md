@@ -34,7 +34,7 @@ Then, you will need to create the database. To do this, run the following
 command:
 
 ```bash
-npx prisma migrate dev
+npx prisma migrate dev --name init
 ```
 
 Then, you will need to start the API. To do this, run the following command:
