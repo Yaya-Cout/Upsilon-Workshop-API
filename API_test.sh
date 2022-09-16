@@ -54,6 +54,8 @@ test() {
     fi
 }
 
+# TODO: Make proper tests
+
 # Remove the cookies
 rm -f /tmp/cookies.txt
 # Test the API
@@ -95,9 +97,9 @@ test "/login" "200" "email=${EMAIL}" "password=${PASSWORD}"
 test "/userinfo" "200"
 
 # Get public user information
-test "/user/by-id/1" "200"
-test "/user/by-id/0" "404"
-test "/user/by-id/f" "401"
+# test "/user/by-id/1" "200"
+# test "/user/by-id/0" "404"
+# test "/user/by-id/f" "401"
 test "/user/by-pseudo/${PSEUDO}" "200"
 test "/user/by-pseudo/unknown" "404"
 test "/user/by-pseudo/f" "404"

@@ -155,40 +155,7 @@ router.get('/userinfo', async (req, res) => {
     }
 });
 
-router.get('/user/by-id/:id', async (req, res) => {
-    // Extract the id from the request
-    const { id } = req.params;
-    // Instantiate a new authentication service
-    const authService = new auth();
-
-    // Initialize the user variable because it will be used outside of the try/catch block
-    // But it won't be marked as const because it will be reassigned
-    let user;
-
-    // Call the getUserById function from the auth module
-    try {
-        user = await authService.getUserFromId(id);
-    }
-    catch (err) {
-        // If the user is not found, return a 404 instead of a 401
-        if (err.message === 'User not found') {
-            return res.status(404).json({ error: err.message });
-        }
-        return res.status(401).json({ error: err.message });
-    }
-
-    // Extract the public fields from the user
-    try {
-        const publicUser = authService.getPublicUser(user);
-        return res.status(200).json(publicUser);
-    }
-    catch (err) {
-        return res.status(400).json({ error: err.message });
-    }
-
-});
-
-router.get('/user/by-pseudo/:pseudo', async (req, res) => {
+router.get('/user/:pseudo', async (req, res) => {
     // Extract the pseudo from the request
     const { pseudo } = req.params;
     // Instantiate a new authentication service
