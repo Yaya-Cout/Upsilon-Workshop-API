@@ -462,23 +462,23 @@ class Auth {
     }
 
     /**
-     * Function to get the user from an username
-     * @param {string} username - The username to get the user from
+     * Function to get the user from an pseudo
+     * @param {string} pseudo - The pseudo to get the user from
      * @returns {Promise} - The user object
      * @async
      * @public
      * @memberof Auth
      * @method
-     * @name getUserFromUsername
+     * @name getUserFromPseudo
      * @throws {Error} - If the user is not found
-     * @throws {Error} - If the username is not found
-     * @throws {Error} - If the username is not valid
+     * @throws {Error} - If the pseudo is not found
+     * @throws {Error} - If the pseudo is not valid
      */
-    async getUserByPseudo(username) {
+    async getUserByPseudo(pseudo) {
         // Get the user from the database
         const user = await this.prisma.user.findUnique({
             where: {
-                pseudo: username
+                pseudo: pseudo
             }
         });
         // Ensure the user exists
@@ -579,22 +579,22 @@ class Auth {
     }
 
     /**
-     * Function to get the user's role from an username
-     * @param {string} username - The username to get the user's role from
+     * Function to get the user's role from an pseudo
+     * @param {string} Pseudo - The pseudo to get the user's role from
      * @returns {string} - The user's role
      * @public
      * @memberof Auth
      * @method
-     * @name getUserRoleFromUsername
+     * @name getUserRoleFromPseudo
      * @throws {Error} - If the user is not found
      * @throws {Error} - If the user's role is not found
      * @throws {Error} - If the user's role is not valid
      * @throws {Error} - If the user's role is not found in the enum
      * @async
      */
-    async getUserRoleFromUsername(username) {
-        // Get the user from the username
-        const user = await this.getUserByPseudo(username);
+    async getUserRoleFromPseudo(Pseudo) {
+        // Get the user from the pseudo
+        const user = await this.getUserByPseudo(Pseudo);
         // Get the user's role
         return this.getUserRole(user);
     }
