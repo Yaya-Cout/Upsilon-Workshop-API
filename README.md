@@ -43,6 +43,16 @@ Then, you will need to start the API. To do this, run the following command:
 npm start
 ```
 
+## Testing
+
+To clear the terminal, reset the database and start the server, run the
+following command:
+
+```bash
+clear && rm prisma/migrations/ prisma/dev.db prisma/dev.db-journal -f; npx prisma migrate dev --name init && npm start
+```
+
+(I know, it's a lot of commands. I'll make a script for this later.)
 
 ## Contributing
 
