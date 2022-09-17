@@ -24,7 +24,10 @@ const router = express.Router({ mergeParams: true });
 const auth = require('../../auth');
 const authService = new auth();
 
-router.post('/', authService.authMiddleware, async (req, res) => {
+// Import the authentication middleware
+const loginMiddleware = require('../authMiddleware');
+
+router.post('/', loginMiddleware, async (req, res) => {
     // Get the token from the cookie
     const token = req.cookies.authToken;
     // Get the password from the body

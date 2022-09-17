@@ -351,7 +351,7 @@ class Auth {
      * @name deleteExpiredTokens
      */
     async deleteExpiredTokens() {
-        // Tokens are valid for Date.now() + TokenExpirationTime, so, to work with createdAt, we need to substract TokenExpirationTime
+        // Tokens are valid for Date.now() + TokenExpirationTime, so, to work with createdAt, we need to subtract TokenExpirationTime
         const date = Date.now() - TokenExpirationTime;
         // Convert the date to the "DateTime" format of Prisma
         const dateToPrisma = new Date(date).toISOString();
@@ -597,48 +597,6 @@ class Auth {
         const user = await this.getUserByPseudo(Pseudo);
         // Get the user's role
         return this.getUserRole(user);
-    }
-
-    /**
-     * Middleware to check if the user is authenticated
-     * @param {object} req - The request object
-     * @param {object} res - The response object
-     * @param {function} next - The next function
-     * @public
-     * @memberof Auth
-     * @method
-     * @name authMiddleware
-     * @throws {Error} - If the token is not valid
-     * @throws {Error} - If the user is not found
-     * @throws {Error} - If the token is not found
-     * @throws {Error} - If the token is expired
-     * @async
-     */
-    async authMiddleware(req, res, next) {
-        // Get the token from the request
-        const token = req.cookies.authToken;
-        // Ensure the token is not empty or undefined
-        if (!token) {
-            // If the token is not found, return an error
-            return res.status(401).json({
-                error: 'Token not found'
-            });
-        }
-        // Get the user from the token
-        let user;
-        try {
-            user = await this.getUserByToken(token);
-        } catch (error) {
-            console.error(error);
-            // If the token is not valid, return an error
-            return res.status(401).json({
-                error: error.message
-            });
-        }
-        // Add the user to the request
-        req.user = user;
-        // Call the next function
-        next();
     }
 
     /**

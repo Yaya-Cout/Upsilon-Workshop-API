@@ -18,13 +18,14 @@
 
 var express = require('express');
 var router = express.Router();
-const auth = require('../auth');
 
 // Import the route handlers
 router.use('/', require('./auth/main'));
 router.use('/user', require('./user/main'));
+router.use('/scripts', require('./scripts/main'));
 
 /* GET home page. */
+// TODO: Use OpenAPI to generate this
 router.get('/', function(req, res) {
     // Return a JSON list of the API endpoints
     res.json({

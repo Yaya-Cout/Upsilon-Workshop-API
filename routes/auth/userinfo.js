@@ -24,7 +24,10 @@ const router = express.Router({ mergeParams: true });
 const auth = require('../../auth');
 const authService = new auth();
 
-router.get('/', authService.authMiddleware, async (req, res) => {
+// Import the authentication middleware
+const loginMiddleware = require('../authMiddleware');
+
+router.get('/', loginMiddleware, async (req, res) => {
     // Call the getPrivateUser function from the auth module
     try {
         const user = await authService.getPrivateUser(req.cookies.authToken);

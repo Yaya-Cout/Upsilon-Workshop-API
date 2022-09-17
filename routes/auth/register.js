@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
         if (lastName) {
             await authService.editLastName(token, lastName);
         }
-        user = await authService.getUserFromToken(token);
+        user = await authService.getUserByToken(token);
         return res.status(201).json({ message: 'User created' });
     }
     catch (err) {
