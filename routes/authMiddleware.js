@@ -43,7 +43,6 @@ async function loginMiddleware(req, res, next) {
     try {
         user = await authService.getUserByToken(token);
     } catch (error) {
-        console.error(error);
         // If the token is not valid, return an error
         return res.status(401).json({
             error: error.message
