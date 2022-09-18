@@ -23,9 +23,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const passwordConfirmationEnabled = false;
-// const TokenExpirationTime = 1000 * 24 * 60 * 60 * 1000; // 24 hours
-const TokenExpirationTime = 1000 * 30; // 30 seconds
-
+const TokenExpirationTime = 1000 * 24 * 60 * 60 * 1000; // 24 hours
 
 // Enum type for the user's role
 const UserRole = Object.freeze({
