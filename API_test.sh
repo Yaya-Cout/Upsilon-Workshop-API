@@ -76,7 +76,9 @@ test() {
 rm -f /tmp/cookies.txt
 # Test the API
 # This line may crash, because the account can already exist
+test "/register" "400"  "email=${EMAIL}" "password=${PASSWORD}"
 test "/register" "201" "email=${EMAIL}" "password=${PASSWORD}" "pseudo=${PSEUDO} firstName=John lastName=Doe"
+test "/register" "400" "email=${EMAIL}" "password=${PASSWORD}" "pseudo=${PSEUDO} firstName=John lastName=Doe"
 test "/login" "200" "email=${EMAIL}" "password=${PASSWORD}"
 test "/logout" "200"
 test "/logout" "401"
