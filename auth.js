@@ -99,6 +99,16 @@ class Auth {
      * @throws {Error} - If the password confirmation is incorrect
      */
     async register(email, password, passwordConfirmation, pseudo) {
+        // Ensure that email, password and pseudo are non-empty strings, and not null or undefined
+        if (!email || typeof email !== 'string') {
+            throw new Error('Invalid email');
+        }
+        if (!password || typeof password !== 'string') {
+            throw new Error('Invalid password');
+        }
+        if (!pseudo || typeof pseudo !== 'string') {
+            throw new Error('Invalid pseudo');
+        }
         const user = await this.prisma.user.findUnique({
             where: {
                 email: email
