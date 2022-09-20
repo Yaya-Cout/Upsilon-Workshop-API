@@ -233,6 +233,56 @@ class Auth {
     }
 
     /**
+     * Function to create a script
+     * @param {string} token - The token of the user
+     * @param {string} name - The name of the script
+     * @param {string} description - The description of the script
+     * @param {string} code - The code of the script
+     * @param {string} language (default: 'python') - The language of the script
+     * @param {string} visibility (default: 'private') - The visibility of the script
+     * @returns {Promise} - The script object
+     * @async
+     * @public
+     * @memberof Auth
+     * @method
+     * @name createScript
+     * @throws {Error} - If the token is invalid
+     * @throws {Error} - If the token is expired
+     * @throws {Error} - If the token is not found
+     * @throws {Error} - If the user is not found
+     */
+    async createScript(token, name, description, code, language, visibility) {
+        // Verify the token
+        const tokenVerify = await this.verifyToken(token);
+        // Crash if the token is invalid
+        if (!tokenVerify) {
+            throw new Error('Invalid token');
+        }
+        // Get the user from the token
+        const user = await this.getUserByToken(token);
+        // Check if the user exists
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        // Create the script
+        return await this.prisma.script.create({
+            data: {
+                name: name,
+                description: description,
+                code: code,
+                language: language,
+                visibility: visibility,
+                authors: {
+                    connect: {
+                        id: user.id
+                    }
+                }
+            }
+        });
+    }
+
+    /**
      * Function to get public information about a user
      * @param {string} user - The user to get information about (can be a pseudo, an id, or a user object)
      * @returns {Promise} - The user object

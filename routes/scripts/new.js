@@ -20,8 +20,28 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 
-// Import the route handlers
-router.use('/new', require('./new'));
+// Import and instantiate the authentication service
+const auth = require('../../auth');
+const authService = new auth();
+
+// Import the authentication middleware
+const loginMiddleware = require('../authMiddleware');
+
+// Create a new script
+router.post('/', loginMiddleware, async (req, res) => {
+    // Get the request parameters
+    const { name, description, code, isPublic } = req.body;
+    const token = req.cookies.authToken;
+    // Create the script
+    try {
+        const script = await authService.createScript(token, name, description, code, isPublic);
+        res.status(200).json(script);
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({ error: err });
+    }
+});
+
 
 // Export the router
 module.exports = router;
