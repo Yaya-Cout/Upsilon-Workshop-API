@@ -265,6 +265,18 @@ class Auth {
             throw new Error('User not found');
         }
 
+        // Ensure that name and code are non-empty strings, and not null or undefined
+        if (!name || typeof name !== 'string') {
+            throw new Error('Invalid name');
+        }
+        if (!code || typeof code !== 'string') {
+            throw new Error('Invalid code');
+        }
+        // Ensure that visibility is a valid visibility (boolean or undefined)
+        if (visibility !== undefined && visibility !== 'public' && visibility !== 'private') {
+            throw new Error('Invalid visibility');
+        }
+
         // Create the script
         return await this.prisma.script.create({
             data: {

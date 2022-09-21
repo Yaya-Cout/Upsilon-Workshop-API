@@ -37,7 +37,6 @@ router.post('/', loginMiddleware, async (req, res) => {
         const script = await authService.createScript(token, name, description, code, isPublic);
         res.status(200).json(script);
     } catch (err) {
-        console.log(err);
         res.status(400).json({ error: err });
     }
 });
