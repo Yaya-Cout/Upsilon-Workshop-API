@@ -22,6 +22,7 @@ const router = express.Router({ mergeParams: true });
 
 // Import the route handlers
 router.use('/new', require('./new'));
+router.use('/delete', require('./delete'));
 
 // Export the router
 module.exports = router;
