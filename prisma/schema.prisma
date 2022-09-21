@@ -48,19 +48,23 @@ model Token {
 }
 
 model Script {
-  id         Int        @id @default(autoincrement())
-  name       String
-  code       String
-  isPublic   Boolean    @default(false)
-  language   String     @default("python")
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id          Int        @id @default(autoincrement())
+  name        String
+  code        String
+  isPublic    Boolean    @default(false)
+  language    String     @default("python")
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   // We want that a script can have multiple authors
-  authors    User[]
+  // We also want to ensure that a user can't be deleted if he has scripts
+  // And, we want to ensure that a script has at least one author
+  authors     User       @relation(references: [id], fields: [userId])
   // We want that a script can have multiple categories
-  categories Category[]
-  ratings    Rating[]
-  reviews    Review[]
+  categories  Category[]
+  ratings     Rating[]
+  reviews     Review[]
+  userId      Int
 }
 
 model Category {

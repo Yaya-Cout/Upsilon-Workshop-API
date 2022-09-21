@@ -33,7 +33,7 @@ request() {
 # Test the API (with or without headers), it uses cURL to make the request
 # $1: URL
 # $2: expected status code
-# Others arguments: headers
+# Others arguments: headers (if first header is "DELETE", it will use the DELETE method)
 test() {
     local url="${API_URL}$1"
     local status="$2"
@@ -45,7 +45,12 @@ test() {
     if [[ -n "${headers}" ]]; then
         # Iterate over the headers
         for header in ${headers}; do
-            cmd="${cmd} -d '${header}'"
+            # If the header is "DELETE", use the DELETE method
+            if [[ "${header}" == "DELETE" ]]; then
+                cmd="${cmd} -X DELETE"
+            else
+                cmd="${cmd} -d '${header}'"
+            fi
         done
     fi
     # Add the cookie input/output
@@ -121,3 +126,12 @@ test "/userinfo" "200"
 test "/user/${PSEUDO}" "200"
 test "/user/unknown" "404"
 test "/user/f" "404"
+
+# Create a script
+test "/scripts/new" "200" "name=script1.py" "code=from time import sleep\nsleep(1)" "description=description" "language=python"
+test "/scripts/new" "200" "name=script1.py" "code=from time import sleep\nsleep(1)"
+test "/scripts/new" "400" "name=script1.py"
+test "/scripts/new" "400" "code=from time import sleep\nsleep(1)"
+test "/scripts/delete/1" "200" "DELETE"
+test "/scripts/delete/1" "404"
+test "/scripts/delete/f" "400" "DELETE"

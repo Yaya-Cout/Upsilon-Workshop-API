@@ -295,6 +295,68 @@ class Auth {
     }
 
     /**
+     * Function to delete a script
+     * @param {string} token - The token of the user
+     * @param {number} scriptId - The id of the script
+     * @returns {Promise} - True if the script was deleted, false otherwise
+     * @async
+     * @public
+     * @memberof Auth
+     * @method
+     * @name deleteScript
+     * @throws {Error} - If the token is invalid
+     * @throws {Error} - If the token is expired
+     * @throws {Error} - If the token is not found
+     * @throws {Error} - If the user is not found
+     * @throws {Error} - If the script is not found
+     * @throws {Error} - If the user is not the author of the script
+     */
+    async deleteScript(token, scriptId) {
+        // Verify the token
+        const tokenVerify = await this.verifyToken(token);
+        // Crash if the token is invalid
+        if (!tokenVerify) {
+            throw new Error('Invalid token');
+        }
+        // Get the user from the token
+        const user = await this.getUserByToken(token);
+        // Check if the user exists
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        // Convert the scriptId to a number, and check if it is a valid number
+        const scriptIdNumber = Number(scriptId);
+        if (isNaN(scriptIdNumber)) {
+            throw new Error('Invalid script id');
+        }
+
+        // Get the script
+        const script = await this.prisma.script.findUnique({
+            where: {
+                id: scriptIdNumber
+            }
+        });
+        // Check if the script exists
+        if (!script) {
+            throw new Error('Script not found');
+        }
+
+        // Check if the user is the author of the script
+        if (!script.authors == user.id) {
+            throw new Error('User is not the author of the script');
+        }
+
+        // Delete the script
+        await this.prisma.script.delete({
+            where: {
+                id: scriptIdNumber
+            }
+        });
+        return true;
+    }
+
+    /**
      * Function to get public information about a user
      * @param {string} user - The user to get information about (can be a pseudo, an id, or a user object)
      * @returns {Promise} - The user object
