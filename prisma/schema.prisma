@@ -56,15 +56,12 @@ model Script {
   description String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  // We want that a script can have multiple authors
-  // We also want to ensure that a user can't be deleted if he has scripts
-  // And, we want to ensure that a script has at least one author
-  authors     User       @relation(references: [id], fields: [userId])
+  author      User       @relation(fields: [authorId], references: [id])
+  authorId    Int
   // We want that a script can have multiple categories
   categories  Category[]
   ratings     Rating[]
   reviews     Review[]
-  userId      Int
 }
 
 model Category {

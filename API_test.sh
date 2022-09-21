@@ -82,8 +82,8 @@ rm -f /tmp/cookies.txt
 # Test the API
 # This line may crash, because the account can already exist
 test "/register" "400"  "email=${EMAIL}" "password=${PASSWORD}"
-test "/register" "201" "email=${EMAIL}" "password=${PASSWORD}" "pseudo=${PSEUDO} firstName=John lastName=Doe"
-test "/register" "400" "email=${EMAIL}" "password=${PASSWORD}" "pseudo=${PSEUDO} firstName=John lastName=Doe"
+test "/register" "201" "email=${EMAIL}" "password=${PASSWORD}" "pseudo=${PSEUDO}" "firstName=John" "lastName=Doe"
+test "/register" "400" "email=${EMAIL}" "password=${PASSWORD}" "pseudo=${PSEUDO}" "firstName=John" "lastName=Doe"
 test "/login" "200" "email=${EMAIL}" "password=${PASSWORD}"
 test "/logout" "200"
 test "/logout" "401"
@@ -99,6 +99,9 @@ test "/delete-account" "401" "use_post_request=true" # use_post_request=true is 
 test "/register" "201" "email=${EMAIL}.1" "password=${PASSWORD}" "pseudo=${PSEUDO}.1"
 test "/login" "200" "email=${EMAIL}.1" "password=${PASSWORD}"
 test "/delete-account" "200" "password=${PASSWORD}"
+# We recreate the account, because we need it for the next tests, but we log out
+test "/register" "201" "email=${EMAIL}.1" "password=${PASSWORD}" "pseudo=${PSEUDO}.1"
+test "/logout" "200"
 # test "/login" "401" "email=${EMAIL}.1" "password=${PASSWORD}"
 # test "/logout" "401"
 
@@ -135,3 +138,14 @@ test "/scripts/new" "400" "code=from time import sleep\nsleep(1)"
 test "/scripts/delete/1" "200" "DELETE"
 test "/scripts/delete/1" "404"
 test "/scripts/delete/f" "400" "DELETE"
+
+# Get a script
+test "/logout" "200"
+test "/scripts/get/2" "400"
+test "/login" "200" "email=${EMAIL}" "password=${PASSWORD}"
+test "/scripts/get/2" "200"
+test "/logout" "200"
+test "/login" "200" "email=${EMAIL}.1" "password=${PASSWORD}"
+test "/scripts/get/2" "400"
+test "/scripts/get/f" "400"
+test "/scripts/get/0" "400"

@@ -285,7 +285,7 @@ class Auth {
                 code: code,
                 language: language,
                 visibility: visibility,
-                authors: {
+                author: {
                     connect: {
                         id: user.id
                     }
@@ -343,7 +343,7 @@ class Auth {
         }
 
         // Check if the user is the author of the script
-        if (!script.authors == user.id) {
+        if (!script.authorId == user.id) {
             throw new Error('User is not the author of the script');
         }
 
@@ -354,6 +354,67 @@ class Auth {
             }
         });
         return true;
+    }
+
+    /**
+     * Function to get a script
+     * @param {string} token - The token of the user
+     * @param {number} scriptId - The id of the script
+     * @returns {Promise} - The script object
+     * @async
+     * @public
+     * @memberof Auth
+     * @method
+     * @name getScript
+     * @throws {Error} - If the token is invalid
+     * @throws {Error} - If the token is expired
+     * @throws {Error} - If the token is not found
+     * @throws {Error} - If the user is not found
+     * @throws {Error} - If the script is not found
+     * @throws {Error} - If the user is not the author of the script and the script is private
+     */
+    async getScript(token, scriptId) {
+        // Convert the scriptId to a number, and check if it is a valid number
+        const scriptIdNumber = Number(scriptId);
+        if (isNaN(scriptIdNumber)) {
+            throw new Error('Invalid script id');
+        }
+
+        // Get the script
+        const script = await this.prisma.script.findUnique({
+            where: {
+                id: scriptIdNumber
+            }
+        });
+        // Check if the script exists
+        if (!script) {
+            throw new Error('Script not found');
+        }
+
+        // If the script is private, verify the token
+        if (!script.isPublic) {
+            // Verify the token
+            const tokenVerify = await this.verifyToken(token);
+            // Crash if the token is invalid
+            if (!tokenVerify) {
+                throw new Error('Script not found');
+            }
+            // Get the user from the token
+            const user = await this.getUserByToken(token);
+            // Check if the user exists
+            if (!user) {
+                throw new Error('Script not found');
+            }
+
+            // Check if the user is the author of the script
+            if (script.authorId != user.id) {
+                throw new Error('Script not found');
+                // eslint-disable-next-line no-unreachable
+                return;
+            }
+        }
+
+        return script;
     }
 
     /**
@@ -511,7 +572,7 @@ class Auth {
     /**
      * Function to verify a token
      * @param {string} token - The token to verify
-     * @returns {boolean} - The result of the verification (true if the token is valid, false otherwise)
+     * @returns {Promise<boolean>} - The result of the verification (true if the token is valid, false otherwise)
      * @public
      * @memberof Auth
      * @method
