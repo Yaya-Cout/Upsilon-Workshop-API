@@ -37,7 +37,6 @@ router.delete('/:id', loginMiddleware, async (req, res) => {
         await authService.deleteScript(token, id);
         return res.status(200).json({ message: 'Script deleted' });
     } catch (err) {
-        console.log(err);
         return res.status(400).json({ error: err.message });
     }
 });
