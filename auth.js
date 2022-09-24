@@ -251,7 +251,7 @@ class Auth {
      * @throws {Error} - If the token is not found
      * @throws {Error} - If the user is not found
      */
-    async createScript(token, name, description, code, language, visibility) {
+    async createScript(token, name, description, code, visibility, language) {
         // Verify the token
         const tokenVerify = await this.verifyToken(token);
         // Crash if the token is invalid
@@ -273,8 +273,14 @@ class Auth {
             throw new Error('Invalid code');
         }
         // Ensure that visibility is a valid visibility (boolean or undefined)
-        if (visibility !== undefined && visibility !== 'public' && visibility !== 'private') {
+        if (visibility !== undefined && visibility != 'true' && visibility != 'false') {
             throw new Error('Invalid visibility');
+        }
+        // Convert visibility to boolean
+        if (visibility == 'true') {
+            visibility = true;
+        } else if (visibility == 'false') {
+            visibility = false;
         }
 
         // Create the script
@@ -284,7 +290,7 @@ class Auth {
                 description: description,
                 code: code,
                 language: language,
-                visibility: visibility,
+                isPublic: visibility,
                 author: {
                     connect: {
                         id: user.id
@@ -416,6 +422,157 @@ class Auth {
 
         return script;
     }
+
+    /**
+     * Function to list scripts
+     * @param {string} query - The query to search for
+     * @param {object} filters - The filters to apply
+     * @param {string} filters.language - The language to filter by
+     * @param {string} filters.author - The author to filter by
+     * @param {number} filters.limit - The limit of scripts to return
+     * @param {string} filters.sort - The sort to apply
+     * @param {string} token (optional) - The token of the user (to get private scripts)
+     * @returns {Promise} - The list of scripts
+     * @async
+     * @public
+     * @memberof Auth
+     * @method
+     * @name listScripts
+     * @throws {Error} - If the filters are invalid
+     */
+    async listScripts(query, filters, token) {
+        // Check if the filters are valid (in case when the filters are undefined, we set them to a default value. eg. filters are defined but filters.limit is undefined, we set filters.limit to 30)
+        if (filters) {
+            if (filters.language && typeof filters.language !== 'string') {
+                if (filters.language !== undefined) {
+                    throw new Error('Invalid filters');
+                }
+                filters.language = undefined;
+            }
+            if (filters.author && typeof filters.author !== 'string') {
+                if (filters.author !== undefined) {
+                    throw new Error('Invalid filters');
+                }
+                filters.author = undefined;
+            }
+            if (filters.limit && typeof filters.limit !== 'number') {
+                if (filters.limit !== undefined) {
+                    throw new Error('Invalid filters');
+                }
+                filters.limit = 30;
+
+            }
+            if (filters.limit < 1) {
+                throw new Error('Invalid filters');
+            }
+            // Ensure that the limit is not greater than 100
+            if (filters.limit > 100) {
+                filters.limit = 100;
+            }
+            if (filters.sort && typeof filters.sort !== 'string') {
+                if (filters.sort !== undefined) {
+                    throw new Error('Invalid filters');
+                }
+                // Set the default sort
+                filters.sort = 'newest';
+            }
+            // Ensure that the sort is either 'new' or 'popular'
+            if (filters.sort !== 'new' && filters.sort !== 'popular') {
+                throw new Error('Invalid filters');
+            }
+        } else {
+            filters = {
+                language: undefined,
+                author: undefined,
+                limit: 30,
+                sort: undefined
+            };
+        }
+
+        // Create the where object
+        const where = {};
+        // Add the query to the where object
+        if (query) {
+            where.OR = [
+                {
+                    name: {
+                        contains: query
+                    }
+                },
+                {
+                    description: {
+                        contains: query
+                    }
+                },
+                {
+                    code: {
+                        contains: query
+                    }
+                }
+            ];
+        }
+        // Add the language to the where object
+        if (filters && filters.language) {
+            where.language = filters.language;
+        }
+        // Add the author to the where object
+        if (filters && filters.author) {
+            where.author = {
+                name: filters.author
+            };
+        }
+        // Add the visibility to the where object
+        if (token) {
+            try {
+                // Verify the token
+                const tokenVerify = await this.verifyToken(token);
+                // Crash if the token is invalid
+                if (!tokenVerify) {
+                    throw new Error('Invalid token');
+                }
+                // Get the user from the token
+                const user = await this.getUserByToken(token);
+                // Check if the user exists
+                if (!user) {
+                    throw new Error('User not found');
+                }
+                where.OR = [
+                    {
+                        isPublic: true
+                    },
+                    {
+                        authorId: user.id
+                    }
+                ];
+            }
+            catch (err) {
+                where.isPublic = true;
+            }
+        } else {
+            where.isPublic = true;
+        }
+
+        // Create the order object
+        const order = {};
+        // Add the sort to the order object
+        if (filters && filters.sort) {
+            if (filters.sort === 'new') {
+                order.createdAt = 'desc';
+            } else if (filters.sort === 'popular') {
+                order.likes = 'desc';
+            }
+        }
+
+        // Get the scripts
+        const scripts = await this.prisma.script.findMany({
+            where,
+            orderBy: order,
+            take: filters.limit
+        });
+
+        return scripts;
+    }
+
 
     /**
      * Function to get public information about a user

@@ -20,11 +20,23 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 
-// Import the route handlers
-router.use('/new', require('./new'));
-router.use('/delete', require('./delete'));
-router.use('/get', require('./get'));
-router.use('/list', require('./list'));
+// Import and instantiate the authentication service
+const auth = require('../../auth');
+const authService = new auth();
+
+// List scripts
+router.get('/', async (req, res) => {
+    // Get the request parameters (query and filters)
+    const { query, filters } = req.query;
+    const token = req.cookies.authToken;
+    // List the scripts
+    try {
+        const scripts = await authService.listScripts(query, filters, token);
+        return res.status(200).json({ scripts });
+    } catch (err) {
+        return res.status(400).json({ error: err.message });
+    }
+});
 
 // Export the router
 module.exports = router;
