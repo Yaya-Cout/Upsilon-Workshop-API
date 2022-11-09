@@ -79,3 +79,21 @@ class OSSerializer(serializers.HyperlinkedModelSerializer):
 
         # Set the read_only fields
         read_only_fields = ['version']
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    """Serializer for the User model."""
+
+    class Meta:
+        """Meta class for the RegisterSerializer."""
+
+        model = User
+        fields = ['username', 'password', 'email']
+
+        # Set the write_only fields
+        write_only_fields = ['password']
+
+    def create(self, validated_data: dict) -> User:
+        """Create a new User object."""
+        # Create and return the user
+        return User.objects.create_user(**validated_data)

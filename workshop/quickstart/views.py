@@ -6,7 +6,7 @@ from rest_framework import permissions
 from workshop.quickstart.models import Script, Rating, OS
 
 # Import the serializers from the serializers.py file
-from workshop.quickstart.serializers import UserSerializer, GroupSerializer, ScriptSerializer, RatingSerializer, OSSerializer
+from workshop.quickstart.serializers import UserSerializer, GroupSerializer, ScriptSerializer, RatingSerializer, OSSerializer, RegisterSerializer
 
 # Import the permissions from the permissions.py file
 from workshop.quickstart.permissions import IsAdminOrReadOnly
@@ -56,3 +56,14 @@ class OSViewSet(viewsets.ModelViewSet):
     queryset = OS.objects.all().order_by('-name')
     serializer_class = OSSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+
+class RegisterViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be registered.
+    """
+    # queryset = User.objects.all().order_by('-date_joined')
+    # We don't want to show any data, because it's a POST request
+    queryset = User.objects.none()
+    serializer_class = RegisterSerializer
+    permission_classes = [permissions.AllowAny]

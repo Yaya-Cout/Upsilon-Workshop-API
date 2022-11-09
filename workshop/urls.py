@@ -25,11 +25,13 @@ urlpatterns = [
 ]
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
-router.register(r'scripts', views.ScriptViewSet)
-router.register(r'ratings', views.RatingViewSet)
-router.register(r'os', views.OSViewSet)
+# We don't want conflict with UserViewSet and RegisterViewSet
+router.register(r'users', views.UserViewSet, basename='user')
+router.register(r'groups', views.GroupViewSet, basename='group')
+router.register(r'scripts', views.ScriptViewSet, basename='script')
+router.register(r'ratings', views.RatingViewSet, basename='rating')
+router.register(r'os', views.OSViewSet, basename='os')
+router.register(r'register', views.RegisterViewSet, basename='register')
 
 urlpatterns += [
     path('', include(router.urls)),
