@@ -28,16 +28,15 @@ class ScriptSerializer(serializers.HyperlinkedModelSerializer):
         model = Script
         fields = ['url', 'name', 'created', 'modified', 'language',
                   'version', 'description', 'ratings', 'downloads',
-                  'views', 'authors', 'content']
+                  'views', 'authors', 'content', 'licence']
 
         # Set the read_only fields
         read_only_fields = ['created', 'modified', 'downloads', 'views',
-                            'authors']
+                            'authors', 'ratings']
 
     # Handle the author field (can't be changed by the user, for now)
     def create(self, validated_data: dict) -> Script:
         """Create a new Script object."""
-
         # TODO: Allow multiple authors, if both accept
         # Set the author to the user that created the script
         validated_data['authors'] = [self.context['request'].user]

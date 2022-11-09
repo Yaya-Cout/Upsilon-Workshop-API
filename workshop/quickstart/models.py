@@ -46,6 +46,8 @@ class Script(models.Model):
     - The comments on the script
     - The number of times the script has been downloaded
     - The number of times the script has been viewed
+    - The content of the script
+    - The licence of the script
     - and more...
     """
 
@@ -83,3 +85,6 @@ class Script(models.Model):
 
     # The number of times the script has been viewed
     views = models.IntegerField(default=0)
+
+    # The licence of the script
+    licence = models.CharField(max_length=100, default='MIT')
