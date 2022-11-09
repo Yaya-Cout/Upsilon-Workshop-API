@@ -28,6 +28,7 @@ router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'scripts', views.ScriptViewSet)
+router.register(r'ratings', views.RatingViewSet)
 
 urlpatterns += [
     path('', include(router.urls)),

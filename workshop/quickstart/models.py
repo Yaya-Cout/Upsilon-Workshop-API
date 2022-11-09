@@ -23,12 +23,27 @@ class Rating(models.Model):
     # rating
     comment = models.TextField(blank=True)
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # The created and modified fields are automatically set by Django
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    # The user that created the rating
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='ratings'
+    )
+
+    # The script that was rated
+    script = models.ForeignKey(
+        'Script',
+        on_delete=models.CASCADE,
+        related_name='ratings'
+    )
 
     def __str__(self) -> str:
         """Return a string representation of the model."""
         return str(self.rating)
-
 
 
 class OS(models.Model):
@@ -42,6 +57,7 @@ class OS(models.Model):
     def __str__(self) -> str:
         """Return a string representation of the model."""
         return f"{self.name}"
+
 
 class Script(models.Model):
     """A script stored in the database.
@@ -104,4 +120,5 @@ class Script(models.Model):
     licence = models.CharField(max_length=100, default='MIT')
 
     # The compatibility of the script
-    compatibility = models.ManyToManyField(OS)
+    # TODO: Forbid empty values
+    compatibility = models.ManyToManyField(OS, blank=True)
