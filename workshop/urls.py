@@ -1,4 +1,4 @@
-"""tutorial URL Configuration
+"""workshop URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
@@ -18,7 +18,7 @@ from django.urls import path
 
 from django.urls import include
 from rest_framework import routers
-from tutorial.quickstart import views
+from workshop.quickstart import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
