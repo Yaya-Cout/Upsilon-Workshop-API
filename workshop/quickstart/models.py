@@ -30,6 +30,19 @@ class Rating(models.Model):
         return str(self.rating)
 
 
+
+class OS(models.Model):
+    """Operating system model."""
+
+    # The name of the operating system
+    name = models.CharField(max_length=100)
+
+    # TODO: Add a version field
+
+    def __str__(self) -> str:
+        """Return a string representation of the model."""
+        return f"{self.name}"
+
 class Script(models.Model):
     """A script stored in the database.
 
@@ -48,6 +61,7 @@ class Script(models.Model):
     - The number of times the script has been viewed
     - The content of the script
     - The licence of the script
+    - The compatibility of the script
     - and more...
     """
 
@@ -88,3 +102,6 @@ class Script(models.Model):
 
     # The licence of the script
     licence = models.CharField(max_length=100, default='MIT')
+
+    # The compatibility of the script
+    compatibility = models.ManyToManyField(OS)
