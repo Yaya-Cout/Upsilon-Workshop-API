@@ -1,5 +1,18 @@
+# Virtualenv
 env/
+
+# Database (for development)
 db.sqlite3
+
+# Pycache
 **/__pycache__/
+
+# VSCode settings
 .vscode/
+
+# Sourcery config
 .sourcery.yaml
+
+# Ignore all migrations, except the __init__.py file
+workshop/migrations/
+!workshop/migrations/__init__.py
