@@ -3,10 +3,13 @@ from rest_framework import viewsets
 from rest_framework import permissions
 
 # Import the models from the models.py file
-from workshop.quickstart.models import Script, Rating
+from workshop.quickstart.models import Script, Rating, OS
 
 # Import the serializers from the serializers.py file
-from workshop.quickstart.serializers import UserSerializer, GroupSerializer, ScriptSerializer, RatingSerializer
+from workshop.quickstart.serializers import UserSerializer, GroupSerializer, ScriptSerializer, RatingSerializer, OSSerializer
+
+# Import the permissions from the permissions.py file
+from workshop.quickstart.permissions import IsAdminOrReadOnly
 
 # Views are the functions that are called when a user visits a URL
 
@@ -44,3 +47,12 @@ class RatingViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all().order_by('-created')
     serializer_class = RatingSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+class OSViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows OS to be viewed or edited.
+    """
+    queryset = OS.objects.all().order_by('-name')
+    serializer_class = OSSerializer
+    permission_classes = [IsAdminOrReadOnly]

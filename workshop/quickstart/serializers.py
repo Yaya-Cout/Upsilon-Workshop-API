@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
 # Import the models from the models.py file
-from workshop.quickstart.models import Script, Rating
+from workshop.quickstart.models import Script, Rating, OS
 
 # Serializers define the API representation.
 
@@ -66,3 +66,16 @@ class RatingSerializer(serializers.HyperlinkedModelSerializer):
 
         # Return the created rating
         return super().create(validated_data)
+
+
+class OSSerializer(serializers.HyperlinkedModelSerializer):
+    """Serializer for the OS model."""
+
+    class Meta:
+        """Meta class for the OSSerializer."""
+
+        model = OS
+        fields = ['name', 'url', 'description']
+
+        # Set the read_only fields
+        read_only_fields = ['version']

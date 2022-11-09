@@ -52,6 +52,12 @@ class OS(models.Model):
     # The name of the operating system
     name = models.CharField(max_length=100)
 
+    # The description of the operating system
+    description = models.TextField(blank=True)
+
+    # The URL of the operating system
+    url = models.URLField(blank=True)
+
     # TODO: Add a version field
 
     def __str__(self) -> str:
