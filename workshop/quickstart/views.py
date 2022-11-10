@@ -40,6 +40,7 @@ class ScriptViewSet(viewsets.ModelViewSet):
     serializer_class = ScriptSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+
 class RatingViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows ratings to be viewed or edited.
@@ -62,7 +63,6 @@ class RegisterViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be registered.
     """
-    # queryset = User.objects.all().order_by('-date_joined')
     # We don't want to show any data, because it's a POST request
     queryset = User.objects.none()
     serializer_class = RegisterSerializer

@@ -12,6 +12,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ['url', 'username', 'email', 'groups']
 
+    # Allow users to edit their own information only
+    def update(self, instance, validated_data):
+        if instance == self.context['request'].user:
+            return super(UserSerializer, self).update(instance, validated_data)
+        else:
+            raise serializers.ValidationError("You can only edit your own information.")
+
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
