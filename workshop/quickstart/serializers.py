@@ -19,6 +19,20 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         else:
             raise serializers.ValidationError("You can only edit your own information.")
 
+    # Allow users to delete their own information only
+    def delete(self, instance, validated_data):
+        if instance == self.context['request'].user:
+            return super(UserSerializer, self).delete(instance, validated_data)
+        else:
+            raise serializers.ValidationError("You can only delete your own information.")
+
+    # Show only public information about users if not the user themselves
+    def to_representation(self, instance):
+        if instance == self.context['request'].user:
+            return super(UserSerializer, self).to_representation(instance)
+        else:
+            return {'username': instance.username}
+
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
