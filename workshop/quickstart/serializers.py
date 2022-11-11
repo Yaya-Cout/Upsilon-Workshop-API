@@ -8,34 +8,51 @@ from workshop.quickstart.models import Script, Rating, OS
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    """A serializer for the User model."""
+
     class Meta:
+        """Meta class for the UserSerializer."""
+
         model = User
         fields = ['url', 'username', 'email', 'groups']
 
     # Allow users to edit their own information only
     def update(self, instance, validated_data):
+        """Update an user."""
         if instance == self.context['request'].user:
             return super(UserSerializer, self).update(instance, validated_data)
         else:
-            raise serializers.ValidationError("You can only edit your own information.")
+            raise serializers.ValidationError(
+                "You can only edit your own information."
+            )
 
     # Allow users to delete their own information only
     def delete(self, instance, validated_data):
-        if instance == self.context['request'].user:
+        """Delete a user."""
+        if instance == self.context['request'].user\
+                or self.context['request'].user.is_staff:
             return super(UserSerializer, self).delete(instance, validated_data)
         else:
-            raise serializers.ValidationError("You can only delete your own information.")
+            raise serializers.ValidationError(
+                "You can only delete your own information."
+            )
 
     # Show only public information about users if not the user themselves
     def to_representation(self, instance):
-        if instance == self.context['request'].user:
+        """Show user information."""
+        if instance == self.context['request'].user\
+                or self.context['request'].user.is_staff:
             return super(UserSerializer, self).to_representation(instance)
         else:
             return {'username': instance.username}
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
+    """Serializer for the Group model."""
+
     class Meta:
+        """Meta class for the GroupSerializer."""
+
         model = Group
         fields = ['url', 'name']
 
