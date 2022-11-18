@@ -9,7 +9,7 @@ from workshop.quickstart.models import Script, Rating, OS
 from workshop.quickstart.serializers import UserSerializer, GroupSerializer, ScriptSerializer, RatingSerializer, OSSerializer, RegisterSerializer
 
 # Import the permissions from the permissions.py file
-from workshop.quickstart.permissions import IsAdminOrReadOnly
+from workshop.quickstart.permissions import IsAdminOrReadOnly, ReadWriteWithoutPost
 
 # Views are the functions that are called when a user visits a URL
 
@@ -20,7 +20,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [ReadWriteWithoutPost]
 
 
 class GroupViewSet(viewsets.ModelViewSet):

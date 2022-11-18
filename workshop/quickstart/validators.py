@@ -19,3 +19,12 @@ def validate_language(value):
             _('%(value)s is not a valid language'),
             params={'value': value},
         )
+
+
+def validate_email(value):
+    """Validate the email of a user."""
+    if '@' not in value:
+        raise ValidationError(
+            _('%(value)s is not a valid email address'),
+            params={'value': value},
+        )

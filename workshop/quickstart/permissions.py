@@ -9,3 +9,12 @@ class IsAdminOrReadOnly(IsAdminUser):
         """Check if the user has permission to access the view."""
         is_admin = super().has_permission(request, view)
         return request.method in SAFE_METHODS or is_admin
+
+
+class ReadWriteWithoutPost(IsAdminUser):
+    """Allow read (GET) and write (PUT, PATCH, DELETE), and deny POST."""
+
+    def has_permission(self, request, view: object) -> bool:
+        """Check if the user has permission to access the view."""
+        is_admin = super().has_permission(request, view)
+        return request.method not in ['POST'] or is_admin

@@ -6,9 +6,17 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import User, Group
 
 # Import the validators from the validators.py file
-from workshop.quickstart.validators import validate_language
+from workshop.quickstart.validators import validate_language, validate_email
 
 # Models are the objects that are stored in the database
+
+
+# Configure user to make email required
+User._meta.get_field('email')._unique = True
+User._meta.get_field('email').blank = False
+User._meta.get_field('email').null = False
+User._meta.get_field('email').validators = [validate_email]
+
 
 class Rating(models.Model):
     """Model for the rating of a script."""
