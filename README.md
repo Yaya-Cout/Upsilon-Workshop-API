@@ -13,7 +13,8 @@ to install the API without affecting your system's Python installation.
 To create a virtualenv, run:
 
 ```bash
-python3 -m venv env
+pip install virtualenv
+virtualenv env
 ```
 
 To activate the virtualenv, run:
