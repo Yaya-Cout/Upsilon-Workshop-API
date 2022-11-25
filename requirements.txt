@@ -1,0 +1,9 @@
+# Server dependencies
+django
+django-filter
+markdown
+djangorestframework
+
+# Testing dependencies
+pytest
+pytest-django
