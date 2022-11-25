@@ -16,3 +16,6 @@ db.sqlite3
 # Ignore all migrations, except the __init__.py file
 workshop/migrations/
 !workshop/migrations/__init__.py
+
+# Ignore other files
+others/

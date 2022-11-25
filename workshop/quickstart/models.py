@@ -22,9 +22,8 @@ class Rating(models.Model):
     """Model for the rating of a script."""
 
     # The rating is a number between 0 and 5
-    rating = models.IntegerField(validators=[
-        MinValueValidator(0),
-        MaxValueValidator(5)]
+    rating = models.FloatField(
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
     )
 
     # The comment is an optional text field that can be used to explain the
@@ -67,6 +66,7 @@ class OS(models.Model):
     url = models.URLField(blank=True)
 
     # TODO: Add a version field
+    # TODO: Add a icon field
 
     def __str__(self) -> str:
         """Return a string representation of the model."""
@@ -96,6 +96,7 @@ class Script(models.Model):
     """
 
     # The content of the script
+    # TODO: Allow multiple files
     content = models.TextField()
 
     # The name of the script (must be unique)
@@ -136,3 +137,7 @@ class Script(models.Model):
     # The compatibility of the script
     # TODO: Forbid empty values
     compatibility = models.ManyToManyField(OS, blank=True)
+
+    # TODO: Add a field for the tags of the script
+    # TODO: Add a field for compatibles machines
+    # TODO: Add a field for size of the script

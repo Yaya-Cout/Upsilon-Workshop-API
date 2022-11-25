@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User, Group
-from rest_framework import serializers
+from rest_framework import serializers, exceptions
 
 # Import the models from the models.py file
 from workshop.quickstart.models import Script, Rating, OS
@@ -16,35 +16,50 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ['url', 'username', 'email', 'groups']
 
-    # Allow users to edit their own information only
     def update(self, instance, validated_data):
         """Update an user."""
-        if instance == self.context['request'].user:
-            return super(UserSerializer, self).update(instance, validated_data)
-        else:
-            raise serializers.ValidationError(
-                "You can only edit your own information."
-            )
+        # TODO: See if we can use view permissions to do this
+        # Prevent non-staff users from adding themselves to groups
+        if not self.context['request'].user.is_staff:
+            # Get the groups the user is in
+            user_groups = list(instance.groups.all())
 
-    # Allow users to delete their own information only
-    def delete(self, instance, validated_data):
-        """Delete a user."""
-        if instance == self.context['request'].user\
-                or self.context['request'].user.is_staff:
-            return super(UserSerializer, self).delete(instance, validated_data)
-        else:
-            raise serializers.ValidationError(
-                "You can only delete your own information."
-            )
+            # Get the groups the user wants to be in
+            if 'groups' in validated_data:
+                # Get the groups the user wants to be in
+                new_groups = validated_data["groups"]
+            else:
+                new_groups = []
+
+            # Ensure that the groups are the same
+            if user_groups != new_groups:
+                raise exceptions.PermissionDenied(
+                    "You can't add or remove yourself from groups"
+                )
+                # Return even if we raise an exception, to be safe
+                return
+
+        # If everything is OK, update the user
+        return super(UserSerializer, self).update(instance, validated_data)
 
     # Show only public information about users if not the user themselves
     def to_representation(self, instance):
         """Show user information."""
+        # Allow staff users to see all information
         if instance == self.context['request'].user\
                 or self.context['request'].user.is_staff:
             return super(UserSerializer, self).to_representation(instance)
-        else:
-            return {'username': instance.username}
+
+        # Get the representation of the user
+        representation = super(UserSerializer, self)\
+            .to_representation(instance)
+
+        # Return only the url and username
+        return {
+            'url': representation['url'],
+            'username': representation['username'],
+            'groups': representation['groups']
+        }
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
@@ -118,6 +133,8 @@ class OSSerializer(serializers.HyperlinkedModelSerializer):
         # Set the read_only fields
         read_only_fields = ['version']
 
+        # TODO: Add OS API url
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     """Serializer for the User model."""
@@ -130,6 +147,17 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         # Set the write_only fields
         write_only_fields = ['password']
+
+        # Mark username, password and email as required
+        required_fields = ['username', 'password', 'email']
+
+        # Mark username and email as unique
+        unique_fields = ['username', 'email']
+
+        # Don't show the password in POST requests
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
     def create(self, validated_data: dict) -> User:
         """Create a new User object."""
