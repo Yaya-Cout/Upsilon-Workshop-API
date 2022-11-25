@@ -39,10 +39,12 @@ class UsersTest(TestCase):
 
         # Check that only public fields are returned for each user
         for user in response.data['results']:
-            self.assertEqual(len(user), 3)
+            self.assertEqual(len(user), 5)
             self.assertIn("url", user)
             self.assertIn("username", user)
             self.assertIn("groups", user)
+            self.assertIn("scripts", user)
+            self.assertIn("ratings", user)
 
         # Edit an user
         response = self.client.put(
@@ -70,11 +72,13 @@ class UsersTest(TestCase):
 
         # Check that private fields are returned for the user
         user = response.data['results'][1]  # TODO: This is not robust
-        self.assertEqual(len(user), 4)
+        self.assertEqual(len(user), 6)
         self.assertIn("url", user)
         self.assertIn("username", user)
         self.assertIn("email", user)
         self.assertIn("groups", user)
+        self.assertIn("scripts", user)
+        self.assertIn("ratings", user)
 
         # Edit the user
         response = self.client.put(
@@ -114,11 +118,13 @@ class UsersTest(TestCase):
 
         # Check that private fields are returned for the user
         for user in response.data['results']:
-            self.assertEqual(len(user), 4)
+            self.assertEqual(len(user), 6)
             self.assertIn("url", user)
             self.assertIn("username", user)
             self.assertIn("email", user)
             self.assertIn("groups", user)
+            self.assertIn("scripts", user)
+            self.assertIn("ratings", user)
 
         # Edit our user
         response = self.client.put(
@@ -154,10 +160,12 @@ class UsersTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check that only public fields are returned
-        self.assertEqual(len(response.data), 3)
+        self.assertEqual(len(response.data), 5)
         self.assertIn("url", response.data)
         self.assertIn("username", response.data)
         self.assertIn("groups", response.data)
+        self.assertIn("scripts", response.data)
+        self.assertIn("ratings", response.data)
 
     def test_users_detail_authenticated(self):
         """Test that authenticated users can use their own private data."""
@@ -169,21 +177,25 @@ class UsersTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check that private fields are returned
-        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data), 6)
         self.assertIn("url", response.data)
         self.assertIn("username", response.data)
         self.assertIn("email", response.data)
         self.assertIn("groups", response.data)
+        self.assertIn("scripts", response.data)
+        self.assertIn("ratings", response.data)
 
         # Get user 2
         response = self.client.get("/users/2/")
         self.assertEqual(response.status_code, 200)
 
         # Check that only public fields are returned
-        self.assertEqual(len(response.data), 3)
+        self.assertEqual(len(response.data), 5)
         self.assertIn("url", response.data)
         self.assertIn("username", response.data)
         self.assertIn("groups", response.data)
+        self.assertIn("scripts", response.data)
+        self.assertIn("ratings", response.data)
 
     def test_users_detail_admin(self):
         """Test that admins can use private data of other users."""
@@ -195,11 +207,13 @@ class UsersTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check that private fields are returned
-        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data), 6)
         self.assertIn("url", response.data)
         self.assertIn("username", response.data)
         self.assertIn("email", response.data)
         self.assertIn("groups", response.data)
+        self.assertIn("scripts", response.data)
+        self.assertIn("ratings", response.data)
 
     def test_users_detail_not_found(self):
         """Test that users cannot access data of non-existing users."""
@@ -229,11 +243,13 @@ class UsersTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check that private fields are returned
-        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data), 6)
         self.assertIn("url", response.data)
         self.assertIn("username", response.data)
         self.assertIn("email", response.data)
         self.assertIn("groups", response.data)
+        self.assertIn("scripts", response.data)
+        self.assertIn("ratings", response.data)
 
         # Check that the user was edited
         self.assertEqual(response.data['username'], self.user['username'])
@@ -255,11 +271,13 @@ class UsersTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check that private fields are returned
-        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data), 6)
         self.assertIn("url", response.data)
         self.assertIn("username", response.data)
         self.assertIn("email", response.data)
         self.assertIn("groups", response.data)
+        self.assertIn("scripts", response.data)
+        self.assertIn("ratings", response.data)
 
         # Check that the user was edited
         self.assertEqual(response.data['username'], self.user['username'])

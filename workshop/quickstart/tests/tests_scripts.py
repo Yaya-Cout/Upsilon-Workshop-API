@@ -32,7 +32,7 @@ class ScriptsTest(TestCase):
             "ratings",
             "downloads",
             "views",
-            "authors",
+            "author",
             "content",
             "licence",
             "compatibility",

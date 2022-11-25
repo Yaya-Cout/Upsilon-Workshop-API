@@ -14,7 +14,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         """Meta class for the UserSerializer."""
 
         model = User
-        fields = ['url', 'username', 'email', 'groups']
+        fields = ['url', 'username', 'email', 'groups', 'scripts', 'ratings']
+
+        read_only_fields = ['scripts', 'ratings']
 
     def update(self, instance, validated_data):
         """Update an user."""
@@ -58,7 +60,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return {
             'url': representation['url'],
             'username': representation['username'],
-            'groups': representation['groups']
+            'groups': representation['groups'],
+            'scripts': representation['scripts'],
+            'ratings': representation['ratings']
         }
 
 
@@ -81,18 +85,18 @@ class ScriptSerializer(serializers.HyperlinkedModelSerializer):
         model = Script
         fields = ['url', 'name', 'created', 'modified', 'language',
                   'version', 'description', 'ratings', 'downloads',
-                  'views', 'authors', 'content', 'licence', 'compatibility']
+                  'views', 'author', 'content', 'licence', 'compatibility']
 
         # Set the read_only fields
         read_only_fields = ['created', 'modified', 'downloads', 'views',
-                            'authors', 'ratings']
+                            'author', 'ratings']
 
     # Handle the author field (can't be changed by the user, for now)
     def create(self, validated_data: dict) -> Script:
         """Create a new Script object."""
         # TODO: Allow multiple authors, if both accept
         # Set the author to the user that created the script
-        validated_data['authors'] = [self.context['request'].user]
+        validated_data['author'] = self.context['request'].user
 
         # Return the created script
         return super().create(validated_data)

@@ -40,7 +40,7 @@ class IsScriptOwnerOrReadOnly(BasePermission):
 
         # To check if the user is the owner of the script, we need to check if
         # the user is in the list of authors of the script
-        is_owner = request.user in obj.authors.all()
+        is_owner = request.user == obj.author
         is_allowed = is_admin or is_owner
         return request.method in SAFE_METHODS or is_allowed
 

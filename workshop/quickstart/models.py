@@ -79,13 +79,12 @@ class Script(models.Model):
     Scripts are stored in the database as a string of text.
     They have metadata associated with them:
     - The name of the script
-    - The author of the script (using relations)
+    - The author of the script
     - The date the script was created
     - The date the script was last modified
     - The language the script is written in
     - The version of the script
     - The description of the script
-    - The rating of the script
     - The comments on the script
     - The number of times the script has been downloaded
     - The number of times the script has been viewed
@@ -104,7 +103,11 @@ class Script(models.Model):
 
     # The author of the script (user is keept when the script is deleted,
     # but the script is deleted when the user is deleted)
-    authors = models.ManyToManyField(User)
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='scripts'
+    )
 
     # The date the script was created
     created = models.DateTimeField(auto_now_add=True)
@@ -121,9 +124,6 @@ class Script(models.Model):
 
     # The description of the script
     description = models.TextField(blank=True)
-
-    # The ratings of the script
-    ratings = models.ManyToManyField(Rating, blank=True)
 
     # The number of times the script has been downloaded
     downloads = models.IntegerField(default=0)
