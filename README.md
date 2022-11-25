@@ -5,6 +5,9 @@ control the Upsilon workshop.
 
 ## Installation
 
+To install the API, you need to have a working installation of Python 3.9 or
+higher. You also need to have a working installation of pip.
+
 ### Virtualenv (optional)
 
 It is recommended to use a virtualenv to install the API. This will allow you
@@ -36,7 +39,8 @@ python -m pip install -r requirements.txt
 Once you have installed the dependencies, you have to initialize the database.
 
 ```bash
-python manage.py migrate
+python manage.py makemigrations workshop
+python manage.py migrate workshop
 ```
 
 ### Creating a superuser
