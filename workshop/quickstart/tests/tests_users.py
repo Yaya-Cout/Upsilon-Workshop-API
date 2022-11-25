@@ -175,6 +175,16 @@ class UsersTest(TestCase):
         self.assertIn("email", response.data)
         self.assertIn("groups", response.data)
 
+        # Get user 2
+        response = self.client.get("/users/2/")
+        self.assertEqual(response.status_code, 200)
+
+        # Check that only public fields are returned
+        self.assertEqual(len(response.data), 3)
+        self.assertIn("url", response.data)
+        self.assertIn("username", response.data)
+        self.assertIn("groups", response.data)
+
     def test_users_detail_admin(self):
         """Test that admins can use private data of other users."""
         # Log in as the admin
