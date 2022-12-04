@@ -33,13 +33,14 @@ class ScriptsTest(TestCase):
             "downloads",
             "views",
             "author",
-            "content",
+            "files",
             "licence",
             "compatibility",
         ]
 
         # Register a user
-        self.client.post("/register/", self.user)
+        response = self.client.post("/register/", self.user)
+        self.assertEqual(response.status_code, 201)
 
         # Manually create an admin user (not through the API)
         User.objects.create_superuser(
@@ -49,40 +50,69 @@ class ScriptsTest(TestCase):
         )
 
         # Log in as the admin
-        self.client.login(username=self.admin['username'],
-                          password=self.admin['password'])
+        logged = self.client.login(username=self.admin['username'],
+                                   password=self.admin['password'])
+        self.assertTrue(logged)
 
         # Create a script
-        self.client.post(
+        response = self.client.post(
             "/scripts/",
             {
                 "name": "admin_script",
                 "language": "python",
                 "description": "test",
-                "content": "print('test')"
-            }
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello world!')",
+                    }
+                ]
+            },
+            content_type="application/json"
         )
+        self.assertEqual(response.status_code, 201)
 
         # Logout
         self.client.logout()
 
         # Login as the user
-        self.client.login(username=self.user['username'],
-                          password=self.user['password'])
+        logged = self.client.login(username=self.user['username'],
+                                   password=self.user['password'])
+        self.assertTrue(logged)
 
         # Create a script
-        self.client.post(
+        response = self.client.post(
             "/scripts/",
             {
                 "name": "user_script",
                 "language": "python",
                 "description": "test",
-                "content": "print('test')"
-            }
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello world!')",
+                    }
+                ]
+            },
+            content_type="application/json"
         )
+        self.assertEqual(response.status_code, 201)
 
         # Logout
         self.client.logout()
+
+    def ensure_script_fields(self, script):
+        """Ensure that all fields are present in the script."""
+        for field in self.scriptPublicFields:
+            self.assertIn(field, script)
+        self.assertEqual(len(script), len(self.scriptPublicFields))
+
+    def ensure_files_valid(self, files):
+        """Ensure that files are valid."""
+        for file in files:
+            self.assertIn('name', file)
+            self.assertIn('content', file)
+            self.assertEqual(len(file), 2)
 
     def test_scripts_unauthenticated(self):
         """Test that unauthenticated users can only list public scripts."""
@@ -92,9 +122,11 @@ class ScriptsTest(TestCase):
 
         # Check that all fields are returned for each script
         for script in response.data['results']:
-            self.assertEqual(len(script), len(self.scriptPublicFields))
-            for field in self.scriptPublicFields:
-                self.assertIn(field, script)
+            self.ensure_script_fields(script)
+
+        # Check that files are valid
+        for script in response.data['results']:
+            self.ensure_files_valid(script['files'])
 
         # Check that we can't create a new script
         response = self.client.post(
@@ -125,8 +157,9 @@ class ScriptsTest(TestCase):
     def test_scripts_authenticated(self):
         """Test that authenticated users can use their own private data."""
         # Log in as the user
-        self.client.login(username=self.user['username'],
-                          password=self.user['password'])
+        logged = self.client.login(username=self.user['username'],
+                                   password=self.user['password'])
+        self.assertTrue(logged)
 
         # Get the response from the API
         response = self.client.get("/scripts/")
@@ -134,9 +167,11 @@ class ScriptsTest(TestCase):
 
         # Check that all fields are returned for each script
         for script in response.data['results']:
-            self.assertEqual(len(script), len(self.scriptPublicFields))
-            for field in self.scriptPublicFields:
-                self.assertIn(field, script)
+            self.ensure_script_fields(script)
+
+        # Check that files are valid
+        for script in response.data['results']:
+            self.ensure_files_valid(script['files'])
 
         # Check that we can create a new script
         response = self.client.post(
@@ -144,8 +179,14 @@ class ScriptsTest(TestCase):
             {
                 "name": "test2",
                 "language": "python",
-                "content": "print('Hello, world!')"
-            }
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    }
+                ]
+            },
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 201)
 
@@ -163,7 +204,16 @@ class ScriptsTest(TestCase):
             {
                 "name": "user_script2",
                 "language": "python",
-                "content": "print('Hello, world!')"
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    },
+                    {
+                        "name": "test2.py",
+                        "content": "from test import *"
+                    }
+                ]
             },
             content_type="application/json"
         )
@@ -175,8 +225,18 @@ class ScriptsTest(TestCase):
             {
                 "name": "admin_script2",
                 "language": "python",
-                "content": "print('Hello, world!')"
-            }
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    },
+                    {
+                        "name": "test2.py",
+                        "content": "from test import *"
+                    }
+                ]
+            },
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 403)
 
@@ -192,9 +252,11 @@ class ScriptsTest(TestCase):
 
         # Check that all fields are returned for each script
         for script in response.data['results']:
-            self.assertEqual(len(script), len(self.scriptPublicFields))
-            for field in self.scriptPublicFields:
-                self.assertIn(field, script)
+            self.ensure_script_fields(script)
+
+        # Check that files are valid
+        for script in response.data['results']:
+            self.ensure_files_valid(script['files'])
 
         # Check that we can create a new script
         response = self.client.post(
@@ -202,8 +264,14 @@ class ScriptsTest(TestCase):
             {
                 "name": "test3",
                 "language": "python",
-                "content": "print('Hello, world!')"
-            }
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    }
+                ]
+            },
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 201)
 
@@ -213,7 +281,16 @@ class ScriptsTest(TestCase):
             {
                 "name": "user_script2",
                 "language": "python",
-                "content": "print('Hello, world!')"
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    },
+                    {
+                        "name": "test2.py",
+                        "content": "from test import *"
+                    }
+                ]
             },
             content_type="application/json"
         )
@@ -225,7 +302,16 @@ class ScriptsTest(TestCase):
             {
                 "name": "admin_script2",
                 "language": "python",
-                "content": "print('Hello, world!')"
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    },
+                    {
+                        "name": "test2.py",
+                        "content": "from test import *"
+                    }
+                ]
             },
             content_type="application/json"
         )
@@ -250,7 +336,12 @@ class ScriptsTest(TestCase):
             "/scripts/",
             {
                 "language": "python",
-                "content": "print('Hello, world!')"
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    }
+                ]
             }
         )
         self.assertEqual(response.status_code, 400)
@@ -260,7 +351,12 @@ class ScriptsTest(TestCase):
             "/scripts/",
             {
                 "name": "test",
-                "content": "print('Hello, world!')"
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    }
+                ]
             }
         )
         self.assertEqual(response.status_code, 400)
@@ -281,7 +377,12 @@ class ScriptsTest(TestCase):
             {
                 "name": "test",
                 "language": "invalid",
-                "content": "print('Hello, world!')"
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    }
+                ]
             }
         )
         self.assertEqual(response.status_code, 400)
@@ -292,10 +393,73 @@ class ScriptsTest(TestCase):
             {
                 "name": "user_script2",
                 "language": "invalid",
-                "content": "print('Hello, world!')"
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    }
+                ]
             },
             content_type="application/json"
         )
         self.assertEqual(response.status_code, 400)
+
+        # Check that we can't create a script with invalid files
+        response = self.client.post(
+            "/scripts/",
+            {
+                "name": "test",
+                "language": "python",
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    },
+                    {
+                        "name": "test2.py",
+                    }
+                ]
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(
+            "/scripts/",
+            {
+                "name": "test",
+                "language": "python",
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    },
+                    {
+                        "content": "from test import *"
+                    }
+                ]
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(
+            "/scripts/",
+            {
+                "name": "test",
+                "language": "python",
+                "files": []
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(
+            "/scripts/",
+            {
+                "name": "test",
+                "language": "python",
+                "files": [{}]
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+
 
     # TODO: Test script download and views when they are implemented

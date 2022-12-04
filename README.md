@@ -81,7 +81,7 @@ pytest
 ```
 
 You can integrate pytest with your IDE (tested with VSCode) by adding Pytest
-configuration in your tests configuration.
+configuration in your tests' configuration.
 
 ## Contributing
 

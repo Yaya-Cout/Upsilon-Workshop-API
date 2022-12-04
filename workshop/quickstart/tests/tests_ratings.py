@@ -54,7 +54,12 @@ class ScriptsTest(TestCase):
             {
                 "name": "Test Script",
                 "language": "python",
-                "content": "print('Hello, world!')",
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    }
+                ]
             },
             content_type="application/json"
         )
@@ -322,7 +327,7 @@ class ScriptsTest(TestCase):
 
         ### Test invalid rating
 
-        # Create a rating with an rating of 6 and -1
+        # Create a rating with a rating of 6 and -1
         for rating in [6, -1, 5.5, -0.5]:
             response = self.client.post(
                 "/ratings/",

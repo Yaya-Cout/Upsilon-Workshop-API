@@ -44,6 +44,7 @@ class IsScriptOwnerOrReadOnly(BasePermission):
         is_allowed = is_admin or is_owner
         return request.method in SAFE_METHODS or is_allowed
 
+
 class IsRatingOwnerOrReadOnly(BasePermission):
     """Allow read/write permissions to the owner of the object and admin."""
 

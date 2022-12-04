@@ -6,10 +6,10 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import User, Group
 
 # Import the validators from the validators.py file
-from workshop.quickstart.validators import validate_language, validate_email
+from workshop.quickstart.validators import validate_language, validate_email, validate_script_files
 
-# Models are the objects that are stored in the database
-
+# Max file size is 100 KB
+MAX_FILE_SIZE = 100 * 1024
 
 # Configure user to make email required
 User._meta.get_field('email')._unique = True
@@ -94,9 +94,10 @@ class Script(models.Model):
     - and more...
     """
 
-    # The content of the script
-    # TODO: Allow multiple files
-    content = models.TextField()
+    # The files that are used in the script
+    files = models.JSONField(
+        validators=[validate_script_files]
+    )
 
     # The name of the script (must be unique)
     name = models.CharField(max_length=100, unique=True)

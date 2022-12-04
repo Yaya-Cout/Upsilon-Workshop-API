@@ -4,6 +4,9 @@ env/
 # Database (for development)
 db.sqlite3
 
+# Script storage
+scripts/
+
 # Pycache
 **/__pycache__/
 
@@ -19,3 +22,6 @@ workshop/migrations/
 
 # Ignore other files
 others/
+
+# Ignore JetBrains IDEs
+.idea/
