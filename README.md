@@ -1,5 +1,8 @@
 # Upsilon Workshop API
 
+This was a draft of a workshop API for the Upsilon Workshop. The real repository
+is [here](https://github.com/Yaya-Cout/Upsilon-Workshop-API-Django).
+
 This is the API for the Upsilon Workshop. It is used to manage the workshop's
 inventory, and to track the progress of the workshop's projects. It is written
 in Javascript, and uses the [Express](http://expressjs.com/) framework. It
