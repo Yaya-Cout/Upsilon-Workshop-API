@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers, exceptions
 
 # Import the models from the models.py file
-from workshop.quickstart.models import Script, Rating, OS
+from workshop.api.models import Script, Rating, OS
 
 # Serializers define the API representation.
 

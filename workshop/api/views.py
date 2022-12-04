@@ -3,13 +3,13 @@ from rest_framework import viewsets
 from rest_framework import permissions
 
 # Import the models from the models.py file
-from workshop.quickstart.models import Script, Rating, OS
+from workshop.api.models import Script, Rating, OS
 
 # Import the serializers from the serializers.py file
-from workshop.quickstart.serializers import UserSerializer, GroupSerializer, ScriptSerializer, RatingSerializer, OSSerializer, RegisterSerializer
+from workshop.api.serializers import UserSerializer, GroupSerializer, ScriptSerializer, RatingSerializer, OSSerializer, RegisterSerializer
 
 # Import the permissions from the permissions.py file
-from workshop.quickstart.permissions import IsAdminOrReadOnly, ReadWriteWithoutPost, IsOwnerOrReadOnly, IsScriptOwnerOrReadOnly, IsRatingOwnerOrReadOnly
+from workshop.api.permissions import IsAdminOrReadOnly, ReadWriteWithoutPost, IsOwnerOrReadOnly, IsScriptOwnerOrReadOnly, IsRatingOwnerOrReadOnly
 # Views are the functions that are called when a user visits a URL
 
 

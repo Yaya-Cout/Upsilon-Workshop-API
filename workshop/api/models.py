@@ -6,7 +6,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import User, Group
 
 # Import the validators from the validators.py file
-from workshop.quickstart.validators import validate_language, validate_email, validate_script_files
+from workshop.api.validators import validate_language, validate_email, validate_script_files
 
 # Max file size is 100 KB
 MAX_FILE_SIZE = 100 * 1024
