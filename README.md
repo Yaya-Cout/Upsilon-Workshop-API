@@ -83,6 +83,12 @@ pytest
 You can integrate pytest with your IDE (tested with VSCode) by adding Pytest
 configuration in your tests' configuration.
 
+## API Documentation
+
+The API documentation is available at `/docs/swagger-ui/` or `/docs/redoc/`.
+You can also access the integrated API directly at the root of the server.
+To import the API to Postman, you can give the following link: `/docs/`.
+
 ## Contributing
 
 If you want to contribute to this project, you can do so by forking the

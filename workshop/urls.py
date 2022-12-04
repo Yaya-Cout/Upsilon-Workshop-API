@@ -20,6 +20,9 @@ from django.urls import include
 from rest_framework import routers
 from workshop.api import views
 
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, \
+    SpectacularSwaggerView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
 ]
@@ -40,4 +43,14 @@ urlpatterns += [
         namespace='rest_framework'
         )
     )
+]
+
+# OpenAPI
+urlpatterns += [
+    # Schema View
+    path('docs/', SpectacularAPIView.as_view(), name='schema'),
+
+    # Swagger and ReDoc
+    path('docs/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
