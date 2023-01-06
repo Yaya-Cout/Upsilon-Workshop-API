@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 ALLOWED_LANGUAGES = [
     'python',
     'micropython-khicas',
-    'xcas-python-**',
+    'xcas-python-pow',
     'xcas-python-xor',
     'xcas',
     'xcas-session'
