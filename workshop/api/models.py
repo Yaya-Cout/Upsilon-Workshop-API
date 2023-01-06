@@ -127,10 +127,10 @@ class Script(models.Model):
     description = models.TextField(blank=True)
 
     # The number of times the script has been downloaded
-    downloads = models.IntegerField(default=0)
+    # downloads = models.IntegerField(default=0)
 
     # The number of times the script has been viewed
-    views = models.IntegerField(default=0)
+    # views = models.IntegerField(default=0)
 
     # The licence of the script
     licence = models.CharField(max_length=100, default='MIT')
