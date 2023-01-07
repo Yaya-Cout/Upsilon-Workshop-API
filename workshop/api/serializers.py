@@ -75,6 +75,8 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         model = Group
         fields = ['url', 'name', 'user_set']
 
+        read_only_fields = ['user_set']
+
 
 class ScriptSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for the Script model."""

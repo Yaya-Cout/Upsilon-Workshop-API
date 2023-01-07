@@ -32,7 +32,9 @@ class GroupsTest(TestCase):
         )
 
         # Login as the admin
-        self.client.login(username="admin", password="password")
+        self.assertTrue(
+            self.client.login(username="admin", password="password")
+        )
 
         # Create a group
         response = self.client.post(
@@ -55,9 +57,10 @@ class GroupsTest(TestCase):
 
         # Check that only public fields are returned for each group
         for group in response.data['results']:
-            self.assertEqual(len(group), 2)
+            self.assertEqual(len(group), 3)
             self.assertIn("url", group)
             self.assertIn("name", group)
+            self.assertIn("user_set", group)
 
         # Ensure that we can't add groups
         response = self.client.post(
@@ -94,9 +97,10 @@ class GroupsTest(TestCase):
 
         # Check that only public fields are returned for each group
         for group in response.data['results']:
-            self.assertEqual(len(group), 2)
+            self.assertEqual(len(group), 3)
             self.assertIn("url", group)
             self.assertIn("name", group)
+            self.assertIn("user_set", group)
 
         # Ensure that we can't add groups
         response = self.client.post(
@@ -136,9 +140,10 @@ class GroupsTest(TestCase):
 
         # Check that only public fields are returned for each group
         for group in response.data['results']:
-            self.assertEqual(len(group), 2)
+            self.assertEqual(len(group), 3)
             self.assertIn("url", group)
             self.assertIn("name", group)
+            self.assertIn("user_set", group)
 
         # Ensure that we can add groups
         response = self.client.post(
