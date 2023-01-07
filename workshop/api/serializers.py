@@ -73,7 +73,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         """Meta class for the GroupSerializer."""
 
         model = Group
-        fields = ['url', 'name']
+        fields = ['url', 'name', 'user_set']
 
 
 class ScriptSerializer(serializers.HyperlinkedModelSerializer):
