@@ -21,6 +21,8 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [ReadWriteWithoutPost, IsOwnerOrReadOnly]
 
+    search_fields = ('username', 'groups__name', 'scripts__name')
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
@@ -29,6 +31,8 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all().order_by('-name')
     serializer_class = GroupSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+    search_fields = ('name', 'user__username')
 
 
 class ScriptViewSet(viewsets.ModelViewSet):
@@ -41,6 +45,11 @@ class ScriptViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly,
         IsScriptOwnerOrReadOnly
     ]
+
+    search_fields = (
+        'name', 'description', 'files', 'licence', 'version', 'language',
+        'author__username', 'compatibility__name',
+    )
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -59,6 +68,8 @@ class RatingViewSet(viewsets.ModelViewSet):
         IsRatingOwnerOrReadOnly
     ]
 
+    search_fields = ('script__name', 'script__author__username', 'rating')
+
 
 class OSViewSet(viewsets.ModelViewSet):
     """
@@ -67,6 +78,8 @@ class OSViewSet(viewsets.ModelViewSet):
     queryset = OS.objects.all().order_by('-name')
     serializer_class = OSSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+    search_fields = ('name', 'url', 'description')
 
 
 class RegisterViewSet(viewsets.ModelViewSet):
