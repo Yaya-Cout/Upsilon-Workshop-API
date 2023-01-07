@@ -30,12 +30,11 @@ class ScriptsTest(TestCase):
             "version",
             "description",
             "ratings",
-            "downloads",
-            "views",
             "author",
             "files",
             "licence",
             "compatibility",
+            "views",
         ]
 
         # Register a user

@@ -26,7 +26,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
-    queryset = Group.objects.all()
+    queryset = Group.objects.all().order_by('-name')
     serializer_class = GroupSerializer
     permission_classes = [IsAdminOrReadOnly]
 
@@ -41,6 +41,11 @@ class ScriptViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly,
         IsScriptOwnerOrReadOnly
     ]
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        Script.objects.filter(pk=instance.id).update(views=instance.views + 1)
+        return super(ScriptViewSet, self).retrieve(request, *args, **kwargs)
 
 
 class RatingViewSet(viewsets.ModelViewSet):
