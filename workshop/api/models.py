@@ -99,8 +99,10 @@ class Script(models.Model):
         validators=[validate_script_files]
     )
 
-    # The name of the script (must be unique)
-    name = models.CharField(max_length=100, unique=True)
+    # The name of the script
+    # TODO: Forbid multiple scripts with the same name for the same user, but
+    # allow multiple scripts with the same name for different users
+    name = models.CharField(max_length=100)
 
     # The author of the script (user is keept when the script is deleted,
     # but the script is deleted when the user is deleted)
