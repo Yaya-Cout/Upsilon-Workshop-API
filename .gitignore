@@ -25,3 +25,6 @@ others/
 
 # Ignore JetBrains IDEs
 .idea/
+
+# Ignore static files
+static/

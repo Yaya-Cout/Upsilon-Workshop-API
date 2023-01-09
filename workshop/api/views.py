@@ -47,7 +47,7 @@ class ScriptViewSet(viewsets.ModelViewSet):
     ]
 
     search_fields = (
-        'name', 'description', 'files', 'licence', 'version', 'language',
+        'name', 'description', 'files', '^licence', 'version', 'language',
         'author__username', 'compatibility__name',
     )
 

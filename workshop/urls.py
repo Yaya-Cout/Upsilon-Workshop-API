@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 
 from django.urls import include
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from rest_framework import routers
 from workshop.api import views
 
@@ -54,3 +55,5 @@ urlpatterns += [
     path('docs/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
+
+urlpatterns += staticfiles_urlpatterns()
