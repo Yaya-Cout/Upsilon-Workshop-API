@@ -4,6 +4,9 @@ django-filter
 markdown
 djangorestframework
 
+# MySQL database
+mysqlclient
+
 # For OpenAPI schema generation
 drf-spectacular
 

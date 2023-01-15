@@ -21,10 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-!flkdn#38kmet0pqxwy_t^1v1)j=46i!ye=zgsdzzy5qgyb#n^"
+# If DJANGO_SECURITY_KEY environnement variable is set, use it
+if os.environ.get("DJANGO_SECURITY_KEY"):
+    SECRET_KEY = os.environ.get("DJANGO_SECURITY_KEY")
+else:
+    SECRET_KEY = "django-insecure-!flkdn#38kmet0pqxwy_t^1v1)j=46i!ye=zgsdzzy5qgyb#n^"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# If DEPLOY=1 environnement flag is set, use DEBUG=False
+if os.environ.get("DEPLOY") == "1":
+    DEBUG = False
+else:
+    DEBUG = True
 
 ALLOWED_HOSTS: list[str] = []
 
@@ -78,12 +86,42 @@ WSGI_APPLICATION = "workshop.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+# If DEPLOY=1 environnement flag is set, use MySQL database
+if os.environ.get("DEPLOY") == "1":
+    # If MYSQL_HOST, MYSQL_PORT, MYSQL_USER and MYSQL_PASSWORD environnement
+    # variables are set, use them to connect to the database
+    if all(
+        os.environ.get(var)
+        for var in ["MYSQL_HOST", "MYSQL_PORT", "MYSQL_USER", "MYSQL_PASSWORD",
+                    "MYSQL_DB"]
+    ):
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.mysql",
+                "NAME": os.environ.get("MYSQL_DB"),
+                "HOST": os.environ.get("MYSQL_HOST"),
+                "PORT": os.environ.get("MYSQL_PORT"),
+                "USER": os.environ.get("MYSQL_USER"),
+                "PASSWORD": os.environ.get("MYSQL_PASSWORD"),
+            }
+        }
+    else:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.mysql",
+                "NAME": "workshop",
+                "OPTIONS": {
+                    "read_default_file": os.path.join(BASE_DIR, "mysql.cnf"),
+                },
+            }
+        }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
 
 
 # Password validation
@@ -120,8 +158,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_URL = "/static/"
+
+# CSRF trusted origins (endpoint url for the API and the frontend)
+CSRF_TRUSTED_ORIGINS = [
+    "https://django-cdqivkhudi9mmk5gqgb0.apps.playground.napptive.dev"
+]
+CSRF_COOKIE_SECURE = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

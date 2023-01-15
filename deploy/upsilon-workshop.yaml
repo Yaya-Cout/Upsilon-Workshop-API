@@ -1,0 +1,45 @@
+apiVersion: core.oam.dev/v1beta1
+kind: Application
+metadata:
+  name: upsilon-workshop
+  annotations: # include optional annotations and/or labels.
+    version: v1.0.0
+    description: "Upsilon Workshop API Server"
+spec:
+  components:
+    - name: django # Django server running on port 8000
+      type: webservice
+      properties:
+        image: yayacout/upsilon-workshop:test-2
+        ports:
+        - port: 80
+          expose: true
+
+      traits:
+      - type: napptive-ingress # a napptive-ingress trait to get a public endpoint
+        properties:
+          name: django
+          port: 80
+          path: /
+
+      # Secret mysql config
+      - type: storage # Set to storage
+        properties:
+          secret: # Secret type storage
+            - name: mysql-config # secret name
+              mountOnly: true # (Optional) Flag to indicate if the PVC has to be mounted or also created. In this case, uses an existing secret
+              mountPath: /etc/workshop/mysql-config # (Required) mount path
+              # subPath: subPath # (Optional) sub path
+              # Mount Secret to Env
+              mountToEnvs:  # mount to Environment variables
+              - envName: MYSQL_HOST
+                secretKey: host
+              - envName: MYSQL_PORT
+                secretKey: port
+              - envName: MYSQL_USER
+                secretKey: user
+              - envName: MYSQL_PASSWORD
+                secretKey: password
+              - envName: MYSQL_DB
+                secretKey: db
+      - type: cpuscaler # Set to cpuscaler
