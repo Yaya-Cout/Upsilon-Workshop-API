@@ -2,36 +2,41 @@ apiVersion: core.oam.dev/v1beta1
 kind: Application
 metadata:
   name: upsilon-workshop
-  annotations: # include optional annotations and/or labels.
+  annotations:
     version: v1.0.0
     description: "Upsilon Workshop API Server"
 spec:
   components:
-    - name: django # Django server running on port 8000
+    - name: django # Workshop API Server
       type: webservice
       properties:
-        image: yayacout/upsilon-workshop:test-2
+        image: yayacout/upsilon-workshop
+        cpu: "0.25"
+        memory: "950Mi"
         ports:
         - port: 80
           expose: true
 
       traits:
-      - type: napptive-ingress # a napptive-ingress trait to get a public endpoint
+      - type: napptive-ingress # Expose port 80 (workshop API server) to the internet
         properties:
           name: django
           port: 80
           path: /
-
-      # Secret mysql config
-      - type: storage # Set to storage
+      - type: cpuscaler # Automatically scale up/down based on CPU usage
+      - type: scaler # Allow scaling (we use 2 replicas in case of a crash of one of the pods)
         properties:
-          secret: # Secret type storage
-            - name: mysql-config # secret name
-              mountOnly: true # (Optional) Flag to indicate if the PVC has to be mounted or also created. In this case, uses an existing secret
-              mountPath: /etc/workshop/mysql-config # (Required) mount path
-              # subPath: subPath # (Optional) sub path
+          replicas: 2
+
+      # Secret configuration
+      - type: storage
+        properties:
+          secret:
+            - name: mysql-config
+              mountOnly: true # Crash if secret is not found
+              mountPath: /etc/workshop/mysql-config
               # Mount Secret to Env
-              mountToEnvs:  # mount to Environment variables
+              mountToEnvs:
               - envName: MYSQL_HOST
                 secretKey: host
               - envName: MYSQL_PORT
@@ -42,4 +47,5 @@ spec:
                 secretKey: password
               - envName: MYSQL_DB
                 secretKey: db
-      - type: cpuscaler # Set to cpuscaler
+              - envName: DJANGO_SECRET_KEY
+                secretKey: django_secret_key
