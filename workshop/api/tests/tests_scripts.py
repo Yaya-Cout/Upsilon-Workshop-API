@@ -35,6 +35,7 @@ class ScriptsTest(TestCase):
             "licence",
             "compatibility",
             "views",
+            "id",
         ]
 
         # Register a user
@@ -71,6 +72,8 @@ class ScriptsTest(TestCase):
         )
         self.assertEqual(response.status_code, 201)
 
+        self.admin_script = response.data
+
         # Logout
         self.client.logout()
 
@@ -96,6 +99,8 @@ class ScriptsTest(TestCase):
             content_type="application/json"
         )
         self.assertEqual(response.status_code, 201)
+
+        self.user_script = response.data
 
         # Logout
         self.client.logout()
@@ -190,16 +195,16 @@ class ScriptsTest(TestCase):
         self.assertEqual(response.status_code, 201)
 
         # Check that we can remove this script
-        response = self.client.delete("/scripts/3/")
+        response = self.client.delete(response.data['url'])
         self.assertEqual(response.status_code, 204)
 
         # Check that we can't remove other people's scripts
-        response = self.client.delete("/scripts/1/")
+        response = self.client.delete(self.admin_script['url'])
         self.assertEqual(response.status_code, 403)
 
         # Check that we can edit our own scripts
         response = self.client.put(
-            "/scripts/2/",
+            self.user_script['url'],
             {
                 "name": "user_script2",
                 "language": "python",
@@ -220,7 +225,7 @@ class ScriptsTest(TestCase):
 
         # Check that we can't edit other people's scripts
         response = self.client.put(
-            "/scripts/1/",
+            self.admin_script['url'],
             {
                 "name": "admin_script2",
                 "language": "python",
@@ -276,7 +281,7 @@ class ScriptsTest(TestCase):
 
         # Check that we can edit our own scripts
         response = self.client.put(
-            "/scripts/1/",
+            self.admin_script['url'],
             {
                 "name": "user_script2",
                 "language": "python",
@@ -297,7 +302,7 @@ class ScriptsTest(TestCase):
 
         # Check that we can edit other people's scripts
         response = self.client.put(
-            "/scripts/2/",
+            self.user_script['url'],
             {
                 "name": "admin_script2",
                 "language": "python",
@@ -317,11 +322,11 @@ class ScriptsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check that we can remove this script
-        response = self.client.delete("/scripts/3/")
+        response = self.client.delete(response.data['url'])
         self.assertEqual(response.status_code, 204)
 
         # Check that we can remove other people's scripts
-        response = self.client.delete("/scripts/1/")
+        response = self.client.delete(self.admin_script['url'])
         self.assertEqual(response.status_code, 204)
 
     def test_scripts_invalid(self):
@@ -388,7 +393,7 @@ class ScriptsTest(TestCase):
 
         # Check that we can't edit a script with invalid language
         response = self.client.put(
-            "/scripts/2/",
+            self.user_script['url'],
             {
                 "name": "user_script2",
                 "language": "invalid",

@@ -29,7 +29,7 @@ class OSTest(TestCase):
             self.admin['username'],
             self.admin['email'],
             self.admin['password']
-         )
+        )
 
         # Log in as the admin
         self.client.login(username=self.admin['username'],
@@ -40,7 +40,7 @@ class OSTest(TestCase):
             "/os/",
             {
                 "name": "Upsilon",
-                "url": "https://getupsilon.web.app",
+                "homepage": "https://getupsilon.web.app",
                 "description": "Upsilon is a free and open-source operating system for graphing calculators.",
             },
             content_type="application/json"
@@ -58,8 +58,9 @@ class OSTest(TestCase):
 
         # Check that only public fields are returned for each OS
         for os in response.data['results']:
-            self.assertEqual(len(os), 3)
+            self.assertEqual(len(os), 4)
             self.assertIn("url", os)
+            self.assertIn("homepage", os)
             self.assertIn("name", os)
             self.assertIn("description", os)
 
@@ -68,7 +69,7 @@ class OSTest(TestCase):
             "/os/",
             {
                 "name": "Omega",
-                "url": "https://getomega.dev",
+                "homepage": "https://getomega.dev",
                 "description": "Omega is a free and open-source operating system for graphing calculators.",
             },
             content_type="application/json"
@@ -80,7 +81,7 @@ class OSTest(TestCase):
             "/os/1/",
             {
                 "name": "Omega",
-                "url": "https://getomega.dev",
+                "homepage": "https://getomega.dev",
                 "description": "Omega is a free and open-source operating system for graphing calculators.",
             },
             content_type="application/json"
@@ -102,8 +103,9 @@ class OSTest(TestCase):
 
         # Check that only public fields are returned for each OS
         for os in response.data['results']:
-            self.assertEqual(len(os), 3)
+            self.assertEqual(len(os), 4)
             self.assertIn("url", os)
+            self.assertIn("homepage", os)
             self.assertIn("name", os)
             self.assertIn("description", os)
 
@@ -112,7 +114,7 @@ class OSTest(TestCase):
             "/os/",
             {
                 "name": "Omega",
-                "url": "https://getomega.dev",
+                "homepage": "https://getomega.dev",
                 "description": "Omega is a free and open-source operating system for graphing calculators.",
             },
             content_type="application/json"
@@ -124,7 +126,7 @@ class OSTest(TestCase):
             "/os/1/",
             {
                 "name": "Omega",
-                "url": "https://getomega.dev",
+                "homepage": "https://getomega.dev",
                 "description": "Omega is a free and open-source operating system for graphing calculators.",
             },
             content_type="application/json"
@@ -149,8 +151,9 @@ class OSTest(TestCase):
 
         # Check that all fields are returned for each OS
         for os in response.data['results']:
-            self.assertEqual(len(os), 3)
+            self.assertEqual(len(os), 4)
             self.assertIn("url", os)
+            self.assertIn("homepage", os)
             self.assertIn("name", os)
             self.assertIn("description", os)
 
@@ -159,7 +162,7 @@ class OSTest(TestCase):
             "/os/",
             {
                 "name": "Omega",
-                "url": "https://getomega.dev",
+                "homepage": "https://getomega.dev",
                 "description": "Omega is a free and open-source operating system for graphing calculators.",
             },
             content_type="application/json"
@@ -168,10 +171,10 @@ class OSTest(TestCase):
 
         # Update an OS
         response = self.client.put(
-            "/os/1/",
+            f"/os/{response.data['name']}/",
             {
                 "name": "Omega",
-                "url": "https://getomega.dev",
+                "homepage": "https://getomega.dev",
                 "description": "Omega is a free and open-source operating system for graphing calculators.",
             },
             content_type="application/json"
@@ -179,7 +182,7 @@ class OSTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Delete an OS
-        response = self.client.delete("/os/1/")
+        response = self.client.delete(f"/os/{response.data['name']}/")
         self.assertEqual(response.status_code, 204)
 
         # Logout

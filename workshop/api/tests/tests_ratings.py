@@ -23,12 +23,12 @@ class ScriptsTest(TestCase):
         self.user_rating = {
             "rating": 5,
             "comment": "This is a comment",
-            "script": "/scripts/1/",
+            "script": "/scripts/",
         }
         self.admin_rating = {
             "rating": 5,
             "comment": "test",
-            "script": "/scripts/1/",
+            "script": "/scripts/",
         }
         self.rating_fields = [
             "url", "rating", "comment", "user", "script", "created", "modified"
@@ -65,6 +65,10 @@ class ScriptsTest(TestCase):
         )
         self.assertEqual(response.status_code, 201)
 
+        # Update the rating data to include the script url
+        self.user_rating["script"] = f"/scripts/{response.data['id']}/"
+        self.admin_rating["script"] = f"/scripts/{response.data['id']}/"
+
         # Create a rating
         response = self.client.post(
             "/ratings/",
@@ -72,6 +76,9 @@ class ScriptsTest(TestCase):
             content_type="application/json"
         )
         self.assertEqual(response.status_code, 201)
+
+        # Add the rating url to the admin rating data
+        self.admin_rating["url"] = response.data["url"]
 
         # Log out
         self.client.logout()
@@ -87,6 +94,9 @@ class ScriptsTest(TestCase):
             content_type="application/json"
         )
         self.assertEqual(response.status_code, 201)
+
+        # Add the rating url to the user rating data
+        self.user_rating["url"] = response.data["url"]
 
         # Logout
         self.client.logout()
@@ -120,7 +130,7 @@ class ScriptsTest(TestCase):
             self.assertEqual(len(item), len(self.rating_fields))
 
         # Get a specific rating
-        response = self.client.get("/ratings/1/")
+        response = self.client.get(self.user_rating["url"])
         self.assertEqual(response.status_code, 200)
 
         # Try to create a rating
@@ -185,14 +195,14 @@ class ScriptsTest(TestCase):
             self.assertEqual(len(item), len(self.rating_fields))
 
         # Get a specific rating
-        response = self.client.get("/ratings/1/")
+        response = self.client.get(self.user_rating["url"])
         self.assertEqual(response.status_code, 200)
 
         # Try to create a rating
         response = self.client.post(
             "/ratings/",
             {
-                "script": "/scripts/1/",
+                "script": self.user_rating["script"],
                 "rating": 5,
                 "comment": "test"
             }
@@ -201,9 +211,9 @@ class ScriptsTest(TestCase):
 
         # Try to edit a rating
         response = self.client.put(
-            "/ratings/3/",
+            self.user_rating["url"],
             {
-                "script": "/scripts/1/",
+                "script": self.user_rating["script"],
                 "rating": 5,
                 "comment": "test",
             },
@@ -212,11 +222,11 @@ class ScriptsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Try to delete a rating
-        response = self.client.delete("/ratings/3/")
+        response = self.client.delete(self.user_rating["url"])
         self.assertEqual(response.status_code, 204)
 
         # Try to delete a rating from another user
-        response = self.client.delete("/ratings/1/")
+        response = self.client.delete(self.admin_rating["url"])
         self.assertEqual(response.status_code, 403)
 
         # Log out
@@ -258,14 +268,14 @@ class ScriptsTest(TestCase):
             self.assertEqual(len(item), len(self.rating_fields))
 
         # Get a specific rating
-        response = self.client.get("/ratings/1/")
+        response = self.client.get(self.user_rating["url"])
         self.assertEqual(response.status_code, 200)
 
         # Try to create a rating
         response = self.client.post(
             "/ratings/",
             {
-                "script": "/scripts/1/",
+                "script": self.user_rating["script"],
                 "rating": 5,
                 "comment": "test"
             }
@@ -274,9 +284,9 @@ class ScriptsTest(TestCase):
 
         # Try to edit a rating
         response = self.client.put(
-            "/ratings/3/",
+            self.user_rating["url"],
             {
-                "script": "/scripts/1/",
+                "script": self.user_rating["script"],
                 "rating": 5,
                 "comment": "test",
             },
@@ -285,11 +295,11 @@ class ScriptsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Try to delete a rating
-        response = self.client.delete("/ratings/3/")
+        response = self.client.delete(self.user_rating["url"])
         self.assertEqual(response.status_code, 204)
 
         # Try to delete a rating from another user
-        response = self.client.delete("/ratings/1/")
+        response = self.client.delete(self.admin_rating["url"])
 
     def test_ratings_empty_comment(self):
         """Test that ratings can be created without a comment."""
@@ -301,7 +311,7 @@ class ScriptsTest(TestCase):
         response = self.client.post(
             "/ratings/",
             {
-                "script": "/scripts/1/",
+                "script": self.user_rating["script"],
                 "rating": 2,
                 "comment": "",
             },
@@ -310,11 +320,11 @@ class ScriptsTest(TestCase):
         self.assertEqual(response.status_code, 201)
 
         # Fetch the rating
-        response = self.client.get("/ratings/3/")
+        response = self.client.get(response.data["url"])
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["comment"], "")
         self.assertEqual(response.data["rating"], 2)
-        self.assertEqual(response.data["script"], "http://testserver/scripts/1/")
+        self.assertEqual(response.data["script"], f"http://testserver{self.user_rating['script']}")
 
         # Log out
         self.client.logout()
@@ -332,7 +342,7 @@ class ScriptsTest(TestCase):
             response = self.client.post(
                 "/ratings/",
                 {
-                    "script": "/scripts/1/",
+                    "script": self.user_rating["script"],
                     "rating": rating,
                     "comment": "test",
                 },
@@ -344,7 +354,7 @@ class ScriptsTest(TestCase):
         response = self.client.post(
             "/ratings/",
             {
-                "script": "/scripts/1/",
+                "script": self.user_rating["script"],
                 "rating": "test",
                 "comment": "test",
             },
@@ -357,7 +367,7 @@ class ScriptsTest(TestCase):
             response = self.client.post(
                 "/ratings/",
                 {
-                    "script": "/scripts/1/",
+                    "script": self.user_rating["script"],
                     "rating": rating,
                     "comment": "test",
                 },

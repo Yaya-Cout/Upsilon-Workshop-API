@@ -27,19 +27,14 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             user_groups = list(instance.groups.all())
 
             # Get the groups the user wants to be in
-            if 'groups' in validated_data:
-                # Get the groups the user wants to be in
-                new_groups = validated_data["groups"]
-            else:
-                new_groups = []
+            new_groups = validated_data["groups"]\
+                if 'groups' in validated_data else []
 
             # Ensure that the groups are the same
             if user_groups != new_groups:
                 raise exceptions.PermissionDenied(
                     "You can't add or remove yourself from groups"
                 )
-                # Return even if we raise an exception, to be safe
-                return
 
         # If everything is OK, update the user
         return super(UserSerializer, self).update(instance, validated_data)
@@ -87,7 +82,7 @@ class ScriptSerializer(serializers.HyperlinkedModelSerializer):
         model = Script
         fields = ['url', 'name', 'created', 'modified', 'language', 'version',
                   'description', 'ratings', 'author', 'files', 'licence',
-                  'compatibility', 'views']
+                  'compatibility', 'views', 'id']
 
         # Set the read_only fields
         read_only_fields = ['created', 'modified', 'downloads', 'views',
@@ -134,7 +129,7 @@ class OSSerializer(serializers.HyperlinkedModelSerializer):
         """Meta class for the OSSerializer."""
 
         model = OS
-        fields = ['name', 'url', 'description']
+        fields = ['name', 'homepage', 'description', 'url']
 
         # Set the read_only fields
         read_only_fields = ['version']
@@ -142,7 +137,7 @@ class OSSerializer(serializers.HyperlinkedModelSerializer):
         # TODO: Add OS API url
 
 
-class RegisterSerializer(serializers.ModelSerializer):
+class RegisterSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for the User model."""
 
     class Meta:

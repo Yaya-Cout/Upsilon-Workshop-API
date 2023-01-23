@@ -5,6 +5,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 # Import the User and Group models from the Django auth module
 from django.contrib.auth.models import User, Group
 
+# Import uuid to generate unique IDs
+import uuid
+
 # Import the validators from the validators.py file
 from workshop.api.validators import validate_language, validate_email, validate_script_files
 
@@ -18,7 +21,19 @@ User._meta.get_field('email').null = False
 User._meta.get_field('email').validators = [validate_email]
 
 
-class Rating(models.Model):
+class UUIDModel(models.Model):
+    """Abstract model that uses UUIDs as primary keys."""
+
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True,
+                          primary_key=True, verbose_name='UUID')
+
+    class Meta:
+        """Meta class for the UUIDModel."""
+
+        abstract = True
+
+
+class Rating(UUIDModel):
     """Model for the rating of a script."""
 
     # The rating is a number between 0 and 5
@@ -57,13 +72,13 @@ class OS(models.Model):
     """Operating system model."""
 
     # The name of the operating system
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, primary_key=True, unique=True)
 
     # The description of the operating system
     description = models.TextField(blank=True)
 
     # The URL of the operating system
-    url = models.URLField(blank=True)
+    homepage = models.URLField(blank=True)
 
     # TODO: Add a version field
     # TODO: Add a icon field
@@ -73,7 +88,7 @@ class OS(models.Model):
         return f"{self.name}"
 
 
-class Script(models.Model):
+class Script(UUIDModel):
     """A script stored in the database.
 
     Scripts are stored in the database as a string of text.

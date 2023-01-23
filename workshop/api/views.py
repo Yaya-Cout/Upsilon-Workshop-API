@@ -79,7 +79,7 @@ class OSViewSet(viewsets.ModelViewSet):
     serializer_class = OSSerializer
     permission_classes = [IsAdminOrReadOnly]
 
-    search_fields = ('name', 'url', 'description')
+    search_fields = ('name', 'homepage', 'description')
 
 
 class RegisterViewSet(viewsets.ModelViewSet):
