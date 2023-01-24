@@ -52,90 +52,14 @@ class OSTest(TestCase):
 
     def test_os_unauthenticated(self):
         """Test that unauthenticated users can only list OS."""
-        # Get the response from the API
-        response = self.client.get("/os/")
-        self.assertEqual(response.status_code, 200)
-
-        # Check that only public fields are returned for each OS
-        for os in response.data['results']:
-            self.assertEqual(len(os), 4)
-            self.assertIn("url", os)
-            self.assertIn("homepage", os)
-            self.assertIn("name", os)
-            self.assertIn("description", os)
-
-        # Try to create an OS
-        response = self.client.post(
-            "/os/",
-            {
-                "name": "Omega",
-                "homepage": "https://getomega.dev",
-                "description": "Omega is a free and open-source operating system for graphing calculators.",
-            },
-            content_type="application/json"
-        )
-        self.assertEqual(response.status_code, 403)
-
-        # Try to update an OS
-        response = self.client.put(
-            "/os/1/",
-            {
-                "name": "Omega",
-                "homepage": "https://getomega.dev",
-                "description": "Omega is a free and open-source operating system for graphing calculators.",
-            },
-            content_type="application/json"
-        )
-        self.assertEqual(response.status_code, 403)
-
-        # Try to delete an OS
-        response = self.client.delete("/os/1/")
-        self.assertEqual(response.status_code, 403)
+        self.check_as_user()
 
     def test_os_authenticated(self):
         """Test that authenticated users can only list OS."""
         # Log in as the user
         self.client.login(username="user", password="password")
 
-        # Get the response from the API
-        response = self.client.get("/os/")
-        self.assertEqual(response.status_code, 200)
-
-        # Check that only public fields are returned for each OS
-        for os in response.data['results']:
-            self.assertEqual(len(os), 4)
-            self.assertIn("url", os)
-            self.assertIn("homepage", os)
-            self.assertIn("name", os)
-            self.assertIn("description", os)
-
-        # Try to create an OS
-        response = self.client.post(
-            "/os/",
-            {
-                "name": "Omega",
-                "homepage": "https://getomega.dev",
-                "description": "Omega is a free and open-source operating system for graphing calculators.",
-            },
-            content_type="application/json"
-        )
-        self.assertEqual(response.status_code, 403)
-
-        # Try to update an OS
-        response = self.client.put(
-            "/os/1/",
-            {
-                "name": "Omega",
-                "homepage": "https://getomega.dev",
-                "description": "Omega is a free and open-source operating system for graphing calculators.",
-            },
-            content_type="application/json"
-        )
-        self.assertEqual(response.status_code, 403)
-
-        # Try to delete an OS
-        response = self.client.delete("/os/1/")
-        self.assertEqual(response.status_code, 403)
+        self.check_as_user()
 
         # Logout
         self.client.logout()
@@ -145,30 +69,7 @@ class OSTest(TestCase):
         # Log in as the admin
         self.client.login(username="admin", password="password")
 
-        # Get the response from the API
-        response = self.client.get("/os/")
-        self.assertEqual(response.status_code, 200)
-
-        # Check that all fields are returned for each OS
-        for os in response.data['results']:
-            self.assertEqual(len(os), 4)
-            self.assertIn("url", os)
-            self.assertIn("homepage", os)
-            self.assertIn("name", os)
-            self.assertIn("description", os)
-
-        # Create an OS
-        response = self.client.post(
-            "/os/",
-            {
-                "name": "Omega",
-                "homepage": "https://getomega.dev",
-                "description": "Omega is a free and open-source operating system for graphing calculators.",
-            },
-            content_type="application/json"
-        )
-        self.assertEqual(response.status_code, 201)
-
+        response = self.add_os(201)
         # Update an OS
         response = self.client.put(
             f"/os/{response.data['name']}/",
@@ -187,3 +88,67 @@ class OSTest(TestCase):
 
         # Logout
         self.client.logout()
+
+    def check_as_user(self) -> None:
+        """Run the tests for unauthenticated and authenticated users."""
+        # Try to create an OS (should fail)
+        response = self.add_os(403)
+
+        # Try to update an OS (should fail)
+        response = self.client.put(
+            "/os/1/",
+            {
+                "name": "Omega",
+                "homepage": "https://getomega.dev",
+                "description": "Omega is a free and open-source operating system for graphing calculators.",
+            },
+            content_type="application/json",
+        )
+
+        # Check the response
+        self.assertEqual(response.status_code, 403)
+
+        # Try to delete an OS (should fail)
+        response = self.client.delete("/os/1/")
+
+        # Check the response
+        self.assertEqual(response.status_code, 403)
+
+    def add_os(self, excepted_status_code: int) -> dict:
+        """Add an OS."""
+
+        # Get the list of OS
+        result = self.client.get("/os/")
+
+        # Check the response
+        self.assertEqual(result.status_code, 200)
+
+        # Verify that the response is correct
+        self.check_os_fields(result.data['results'])
+
+        # Create an OS
+        result = self.client.post(
+            "/os/",
+            {
+                "name": "Omega",
+                "homepage": "https://getomega.dev",
+                "description": "Omega is a free and open-source operating system for graphing calculators.",
+            },
+            content_type="application/json",
+        )
+
+        # Check the response
+        self.assertEqual(result.status_code, excepted_status_code)
+
+        # Return the result
+        return result
+
+    def check_os_fields(self, results: None) -> None:
+        """Check that all fields are present in the OS object."""
+        for os in results:
+            self.assertEqual(len(os), 5)
+            self.assertIn("url", os)
+            self.assertIn("homepage", os)
+            self.assertIn("name", os)
+            self.assertIn("description", os)
+            self.assertIn("script_set", os)

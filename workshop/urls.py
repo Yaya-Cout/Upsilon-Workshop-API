@@ -35,6 +35,7 @@ router.register(r'groups', views.GroupViewSet, basename='group')
 router.register(r'scripts', views.ScriptViewSet, basename='script')
 router.register(r'ratings', views.RatingViewSet, basename='rating')
 router.register(r'os', views.OSViewSet, basename='os')
+router.register(r'tags', views.TagViewSet, basename='tag')
 router.register(r'register', views.RegisterViewSet, basename='register')
 
 urlpatterns += [

@@ -88,6 +88,20 @@ class OS(models.Model):
         return f"{self.name}"
 
 
+class Tag(models.Model):
+    """Tag model."""
+
+    # The name of the tag
+    name = models.CharField(max_length=100, primary_key=True, unique=True)
+
+    # The description of the tag
+    description = models.TextField(blank=True)
+
+    def __str__(self) -> str:
+        """Return a string representation of the model."""
+        return f"{self.name}"
+
+
 class Script(UUIDModel):
     """A script stored in the database.
 
@@ -156,6 +170,7 @@ class Script(UUIDModel):
     # TODO: Forbid empty values
     compatibility = models.ManyToManyField(OS, blank=True)
 
-    # TODO: Add a field for the tags of the script
+    tags = models.ManyToManyField(Tag, blank=True)
+
     # TODO: Add a field for compatibles machines
     # TODO: Add a field for size of the script

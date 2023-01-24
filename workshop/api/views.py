@@ -3,10 +3,10 @@ from rest_framework import viewsets
 from rest_framework import permissions
 
 # Import the models from the models.py file
-from workshop.api.models import Script, Rating, OS
+from workshop.api.models import Script, Rating, OS, Tag
 
 # Import the serializers from the serializers.py file
-from workshop.api.serializers import UserSerializer, GroupSerializer, ScriptSerializer, RatingSerializer, OSSerializer, RegisterSerializer
+from workshop.api.serializers import UserSerializer, GroupSerializer, ScriptSerializer, RatingSerializer, OSSerializer, TagSerializer, RegisterSerializer
 
 # Import the permissions from the permissions.py file
 from workshop.api.permissions import IsAdminOrReadOnly, ReadWriteWithoutPost, IsOwnerOrReadOnly, IsScriptOwnerOrReadOnly, IsRatingOwnerOrReadOnly
@@ -80,6 +80,17 @@ class OSViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
 
     search_fields = ('name', 'homepage', 'description')
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows tags to be viewed or edited.
+    """
+    queryset = Tag.objects.all().order_by('-name')
+    serializer_class = TagSerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+    search_fields = ('name', 'description')
 
 
 class RegisterViewSet(viewsets.ModelViewSet):

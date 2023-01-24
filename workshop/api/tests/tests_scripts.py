@@ -36,6 +36,7 @@ class ScriptsTest(TestCase):
             "compatibility",
             "views",
             "id",
+            "tags"
         ]
 
         # Register a user
@@ -120,17 +121,8 @@ class ScriptsTest(TestCase):
 
     def test_scripts_unauthenticated(self):
         """Test that unauthenticated users can only list public scripts."""
-        # Get the response from the API
-        response = self.client.get("/scripts/")
-        self.assertEqual(response.status_code, 200)
-
-        # Check that all fields are returned for each script
-        for script in response.data['results']:
-            self.ensure_script_fields(script)
-
-        # Check that files are valid
-        for script in response.data['results']:
-            self.ensure_files_valid(script['files'])
+        # Check that we can list scripts
+        response = self.ensure_list_valid()
 
         # Check that we can't create a new script
         response = self.client.post(
@@ -165,18 +157,7 @@ class ScriptsTest(TestCase):
                                    password=self.user['password'])
         self.assertTrue(logged)
 
-        # Get the response from the API
-        response = self.client.get("/scripts/")
-        self.assertEqual(response.status_code, 200)
-
-        # Check that all fields are returned for each script
-        for script in response.data['results']:
-            self.ensure_script_fields(script)
-
-        # Check that files are valid
-        for script in response.data['results']:
-            self.ensure_files_valid(script['files'])
-
+        response = self.ensure_list_valid()
         # Check that we can create a new script
         response = self.client.post(
             "/scripts/",
@@ -250,18 +231,7 @@ class ScriptsTest(TestCase):
         self.client.login(username=self.admin['username'],
                           password=self.admin['password'])
 
-        # Get the response from the API
-        response = self.client.get("/scripts/")
-        self.assertEqual(response.status_code, 200)
-
-        # Check that all fields are returned for each script
-        for script in response.data['results']:
-            self.ensure_script_fields(script)
-
-        # Check that files are valid
-        for script in response.data['results']:
-            self.ensure_files_valid(script['files'])
-
+        response = self.ensure_list_valid()
         # Check that we can create a new script
         response = self.client.post(
             "/scripts/",
@@ -465,5 +435,24 @@ class ScriptsTest(TestCase):
         )
         self.assertEqual(response.status_code, 400)
 
+    def ensure_list_valid(self) -> dict:
+        """Ensure that the list of scripts is valid and return it."""
+
+        # Get the list of scripts
+        result = self.client.get("/scripts/")
+
+        # Check the return code
+        self.assertEqual(result.status_code, 200)
+
+        # Check that the script fields are present
+        for script in result.data['results']:
+            self.ensure_script_fields(script)
+
+        # Check that the files are valid
+        for script in result.data['results']:
+            self.ensure_files_valid(script['files'])
+
+        # Return the result
+        return result
 
     # TODO: Test script download and views when they are implemented

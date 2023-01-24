@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers, exceptions
 
 # Import the models from the models.py file
-from workshop.api.models import Script, Rating, OS
+from workshop.api.models import Script, Rating, OS, Tag
 
 # Serializers define the API representation.
 
@@ -82,7 +82,7 @@ class ScriptSerializer(serializers.HyperlinkedModelSerializer):
         model = Script
         fields = ['url', 'name', 'created', 'modified', 'language', 'version',
                   'description', 'ratings', 'author', 'files', 'licence',
-                  'compatibility', 'views', 'id']
+                  'compatibility', 'views', 'id', 'tags']
 
         # Set the read_only fields
         read_only_fields = ['created', 'modified', 'downloads', 'views',
@@ -129,12 +129,25 @@ class OSSerializer(serializers.HyperlinkedModelSerializer):
         """Meta class for the OSSerializer."""
 
         model = OS
-        fields = ['name', 'homepage', 'description', 'url']
+        fields = ['name', 'homepage', 'description', 'url', 'script_set']
 
         # Set the read_only fields
-        read_only_fields = ['version']
+        read_only_fields = ['version', 'script_set']
 
         # TODO: Add OS API url
+
+
+class TagSerializer(serializers.HyperlinkedModelSerializer):
+    """Serializer for the Tag model."""
+
+    class Meta:
+        """Meta class for the TagSerializer."""
+
+        model = Tag
+        fields = ['name', 'description', 'url', 'script_set']
+
+        # Set the read_only fields
+        read_only_fields = ['version', 'script_set']
 
 
 class RegisterSerializer(serializers.HyperlinkedModelSerializer):
