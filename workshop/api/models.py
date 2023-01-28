@@ -178,7 +178,11 @@ class Script(UUIDModel):
     # TODO: Forbid empty values
     compatibility = models.ManyToManyField(OS, blank=True)
 
+    # The tags of the script
     tags = models.ManyToManyField(Tag, blank=True)
+
+    # The visibility of the script
+    is_public = models.BooleanField(default=True)
 
     # TODO: Add a field for compatibles machines
     # TODO: Add a field for size of the script

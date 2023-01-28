@@ -56,6 +56,26 @@ class ScriptViewSet(viewsets.ModelViewSet):
         Script.objects.filter(pk=instance.id).update(views=instance.views + 1)
         return super(ScriptViewSet, self).retrieve(request, *args, **kwargs)
 
+    def get_queryset(self):
+        # If the user is the admin, get all scripts
+        if self.request.user.is_staff:
+            return super(ScriptViewSet, self).get_queryset()
+        # Get public scripts
+        queryset = Script.objects.filter(is_public=True)
+
+        # If the user is authenticated, get their private scripts too
+        if self.request.user.is_authenticated:
+            queryset = queryset | Script.objects.filter(
+                author=self.request.user
+            )
+
+            # Add the scripts the user is one of the collaborators of
+            queryset = queryset | Script.objects.filter(
+                collaborators=self.request.user
+            )
+
+        return queryset.order_by('-created')
+
 
 class RatingViewSet(viewsets.ModelViewSet):
     """

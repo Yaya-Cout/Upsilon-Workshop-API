@@ -44,7 +44,8 @@ class ScriptsTest(TestCase):
             "compatibility",
             "views",
             "id",
-            "tags"
+            "tags",
+            "is_public"
         ]
 
         # Register a user
@@ -527,6 +528,114 @@ class ScriptsTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 400)
+
+    def test_private_scripts(self):
+        """Test that private scripts are not visible to other users."""
+        # Log in as the user
+        self.client.login(username=self.user['username'],
+                          password=self.user['password'])
+
+        # Create a private script
+        response = self.client.post(
+            "/scripts/",
+            {
+                "name": "private_script",
+                "language": "python",
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    }
+                ],
+                "is_public": False
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 201)
+
+        # Save the URL
+        private_script = response.data['url']
+
+        # Get the script
+        response = self.client.get(private_script)
+        self.assertEqual(response.status_code, 200)
+
+        # Get the list of scripts and check that the private script is in it
+        response = self.client.get("/scripts/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(private_script, [script['url'] for script in
+                                       response.data['results']])
+
+        # Log in as the admin
+        self.client.logout()
+        self.client.login(username=self.admin['username'],
+                          password=self.admin['password'])
+
+        # Get the script and check that it it is visible (admins can see
+        # everything)
+        response = self.client.get(private_script)
+        self.assertEqual(response.status_code, 200)
+
+        # Get the list of scripts and check that the private script is in it
+        response = self.client.get("/scripts/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(private_script, [script['url'] for script in
+                                        response.data['results']])
+        self.client.logout()
+
+        # Log in as the other user
+        self.client.login(username=self.user2['username'],
+                          password=self.user2['password'])
+
+        # Get the script and check that it is not visible
+        response = self.client.get(private_script)
+        self.assertEqual(response.status_code, 404)
+
+        # Get the list of scripts and check that the private script is not in
+        # it
+        response = self.client.get("/scripts/")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(private_script, [script['url'] for script in
+                                          response.data['results']])
+        self.client.logout()
+
+        # Log in as the user and add the other user as a collaborator
+        self.client.login(username=self.user['username'],
+                            password=self.user['password'])
+        response = self.client.patch(
+            private_script,
+            {
+                "collaborators": [self.user2['url']]
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Get the script and check that it is visible
+        response = self.client.get(private_script)
+        self.assertEqual(response.status_code, 200)
+
+        # Get the list of scripts and check that the private script is in it
+        response = self.client.get("/scripts/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(private_script, [script['url'] for script in
+                                       response.data['results']])
+
+        # Log in as the other user
+        self.client.logout()
+        self.client.login(username=self.user2['username'],
+                            password=self.user2['password'])
+
+        # Get the script and check that it is visible
+        response = self.client.get(private_script)
+        self.assertEqual(response.status_code, 200)
+
+        # Get the list of scripts and check that the private script is in it
+        response = self.client.get("/scripts/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(private_script, [script['url'] for script in
+                                       response.data['results']])
+
 
     def ensure_list_valid(self) -> dict:
         """Ensure that the list of scripts is valid and return it."""

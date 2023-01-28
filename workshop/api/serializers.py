@@ -84,7 +84,8 @@ class ScriptSerializer(serializers.HyperlinkedModelSerializer):
         model = Script
         fields = ['url', 'name', 'created', 'modified', 'language', 'version',
                   'description', 'ratings', 'author', 'collaborators', 'files',
-                  'licence', 'compatibility', 'views', 'id', 'tags']
+                  'licence', 'compatibility', 'views', 'id', 'tags',
+                  'is_public']
 
         # Set the read_only fields
         read_only_fields = ['created', 'modified', 'downloads', 'views',
@@ -135,8 +136,6 @@ class OSSerializer(serializers.HyperlinkedModelSerializer):
 
         # Set the read_only fields
         read_only_fields = ['version', 'script_set']
-
-        # TODO: Add OS API url
 
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
