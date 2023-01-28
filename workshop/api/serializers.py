@@ -14,9 +14,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         """Meta class for the UserSerializer."""
 
         model = User
-        fields = ['url', 'username', 'email', 'groups', 'scripts', 'ratings']
+        fields = ['url', 'username', 'email', 'groups', 'scripts',
+                  'collaborations', 'ratings']
 
-        read_only_fields = ['scripts', 'ratings']
+        read_only_fields = ['scripts', 'collaborations', 'ratings']
 
     def update(self, instance, validated_data):
         """Update an user."""
@@ -57,6 +58,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'username': representation['username'],
             'groups': representation['groups'],
             'scripts': representation['scripts'],
+            'collaborations': representation['collaborations'],
             'ratings': representation['ratings']
         }
 
@@ -81,8 +83,8 @@ class ScriptSerializer(serializers.HyperlinkedModelSerializer):
 
         model = Script
         fields = ['url', 'name', 'created', 'modified', 'language', 'version',
-                  'description', 'ratings', 'author', 'files', 'licence',
-                  'compatibility', 'views', 'id', 'tags']
+                  'description', 'ratings', 'author', 'collaborators', 'files',
+                  'licence', 'compatibility', 'views', 'id', 'tags']
 
         # Set the read_only fields
         read_only_fields = ['created', 'modified', 'downloads', 'views',
@@ -157,7 +159,7 @@ class RegisterSerializer(serializers.HyperlinkedModelSerializer):
         """Meta class for the RegisterSerializer."""
 
         model = User
-        fields = ['username', 'password', 'email']
+        fields = ['username', 'password', 'email', 'url', 'id']
 
         # Set the write_only fields
         write_only_fields = ['password']

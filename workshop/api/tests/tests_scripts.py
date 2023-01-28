@@ -15,6 +15,13 @@ class ScriptsTest(TestCase):
             "password": "password",
             "email": "user@example.com",
         }
+
+        self.user2 = {
+            "username": "user2",
+            "password": "password",
+            "email": "user2@example.com",
+        }
+
         self.admin = {
             "username": "admin",
             "password": "password",
@@ -31,6 +38,7 @@ class ScriptsTest(TestCase):
             "description",
             "ratings",
             "author",
+            "collaborators",
             "files",
             "licence",
             "compatibility",
@@ -42,6 +50,12 @@ class ScriptsTest(TestCase):
         # Register a user
         response = self.client.post("/register/", self.user)
         self.assertEqual(response.status_code, 201)
+        self.user["url"] = response.data["url"]
+
+        # Register a second user
+        response = self.client.post("/register/", self.user2)
+        self.assertEqual(response.status_code, 201)
+        self.user2["url"] = response.data["url"]
 
         # Manually create an admin user (not through the API)
         User.objects.create_superuser(
@@ -67,6 +81,9 @@ class ScriptsTest(TestCase):
                         "name": "test.py",
                         "content": "print('Hello world!')",
                     }
+                ],
+                "collaborators": [
+                    self.user2['url']
                 ]
             },
             content_type="application/json"
@@ -223,6 +240,82 @@ class ScriptsTest(TestCase):
             },
             content_type="application/json"
         )
+        self.assertEqual(response.status_code, 403)
+
+    def test_script_collaborators(self):
+        """Test that collaborators can use each other's private data."""
+        # Log in as the user
+        logged = self.client.login(username=self.user2['username'],
+                                   password=self.user2['password'])
+        self.assertTrue(logged)
+
+        # Check that we can't edit other people's scripts
+        response = self.client.put(
+            self.user_script['url'],
+            {
+                "name": "user_script2",
+                "language": "python",
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    },
+                    {
+                        "name": "test2.py",
+                        "content": "from test import *"
+                    }
+                ]
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 403)
+
+        # Try to add the user as a collaborator, but don't have permission
+        response = self.client.patch(
+            self.admin_script['url'],
+            {
+                "collaborators": [
+                    self.user['url'],
+                    self.user2['url']
+                ]
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 403)
+
+        # Check that we can edit other people's scripts
+        response = self.client.patch(
+            self.admin_script['url'],
+            {
+                "name": "admin_script2",
+                "language": "python",
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    },
+                    {
+                        "name": "test2.py",
+                        "content": "from test import *"
+                    }
+                ]
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Ensure we can't change the author
+        response = self.client.patch(
+            self.admin_script['url'],
+            {
+                "author": self.user['url']
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Ensure we can't delete the script
+        response = self.client.delete(self.admin_script['url'])
         self.assertEqual(response.status_code, 403)
 
     def test_scripts_admin(self):
@@ -437,7 +530,6 @@ class ScriptsTest(TestCase):
 
     def ensure_list_valid(self) -> dict:
         """Ensure that the list of scripts is valid and return it."""
-
         # Get the list of scripts
         result = self.client.get("/scripts/")
 

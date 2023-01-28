@@ -141,6 +141,14 @@ class Script(UUIDModel):
         related_name='scripts'
     )
 
+    # Collaborators of the script (should be displayed along with the author,
+    # have read/write access to the script, but can't delete the script)
+    collaborators = models.ManyToManyField(
+        User,
+        related_name='collaborations',
+        blank=True
+    )
+
     # The date the script was created
     created = models.DateTimeField(auto_now_add=True)
 
