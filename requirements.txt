@@ -10,6 +10,9 @@ mysqlclient
 # For OpenAPI schema generation
 drf-spectacular
 
+# For django-filter bootstrap styling
+django-crispy-forms
+
 # Testing dependencies
 pytest
 pytest-django
