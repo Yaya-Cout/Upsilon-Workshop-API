@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
+from django_filters import rest_framework as filters
 
 # Import the models from the models.py file
 from workshop.api.models import Script, Rating, OS, Tag
@@ -23,6 +24,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
     search_fields = ('username', 'groups__name', 'scripts__name')
 
+    filterset_fields = ('username', 'email', 'first_name', 'last_name')
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
@@ -33,6 +36,8 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
 
     search_fields = ('name', 'user__username')
+
+    filterset_fields = ('name', 'user__username')
 
 
 class ScriptViewSet(viewsets.ModelViewSet):
@@ -48,6 +53,11 @@ class ScriptViewSet(viewsets.ModelViewSet):
 
     search_fields = (
         'name', 'description', 'files', '^licence', 'version', 'language',
+        'author__username', 'compatibility__name',
+    )
+
+    filterset_fields = (
+        'name', 'description', 'licence', 'version', 'language',
         'author__username', 'compatibility__name',
     )
 
@@ -90,6 +100,8 @@ class RatingViewSet(viewsets.ModelViewSet):
 
     search_fields = ('script__name', 'script__author__username', 'rating')
 
+    filterset_fields = ('script__name', 'script__author__username', 'rating')
+
 
 class OSViewSet(viewsets.ModelViewSet):
     """
@@ -101,6 +113,8 @@ class OSViewSet(viewsets.ModelViewSet):
 
     search_fields = ('name', 'homepage', 'description')
 
+    filterset_fields = ('name', 'homepage', 'description')
+
 
 class TagViewSet(viewsets.ModelViewSet):
     """
@@ -111,6 +125,8 @@ class TagViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
 
     search_fields = ('name', 'description')
+
+    filterset_fields = ('name', 'description')
 
 
 class RegisterViewSet(viewsets.ModelViewSet):
