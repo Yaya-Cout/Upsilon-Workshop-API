@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 
-class ScriptsTest(TestCase):
+class RatingsTest(TestCase):
     """Test that permissions are enforced on the /ratings/ endpoint."""
 
     def setUp(self):
