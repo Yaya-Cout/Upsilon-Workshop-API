@@ -54,7 +54,7 @@ class UsersTest(TestCase):
 
         # Remove an user
         response = self.client.delete("/users/2/")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_users_authenticated(self):
         """Test that authenticated users can use their own private data."""
@@ -190,7 +190,7 @@ class UsersTest(TestCase):
         # Get the response from the API
         response = self.client.put("/users/1/", self.user,
                                    content_type="application/json")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_users_edit_authenticated(self):
         """Test that authenticated users can only edit themselves."""
@@ -245,7 +245,7 @@ class UsersTest(TestCase):
         """Test that unauthenticated users cannot delete users."""
         # Get the response from the API
         response = self.client.delete("/users/1/")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_users_delete_authenticated(self):
         """Test that authenticated users cannot delete users."""

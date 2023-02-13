@@ -70,7 +70,7 @@ class GroupsTest(TestCase):
             },
             content_type="application/json"
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
         # Ensure that we can't update groups
         response = self.client.put(
@@ -80,11 +80,11 @@ class GroupsTest(TestCase):
             },
             content_type="application/json"
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
         # Ensure that we can't delete groups
         response = self.client.delete("/groups/1/")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_groups_authenticated(self):
         """Test that authenticated users can only list groups."""
@@ -249,7 +249,7 @@ class GroupsUsersTest(TestCase):
             },
             content_type="application/json"
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
         # Ensure we can't remove users from groups
         response = self.client.put(
@@ -261,7 +261,7 @@ class GroupsUsersTest(TestCase):
             },
             content_type="application/json"
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_groups_authenticated(self):
         """Test that authenticated users can only list groups."""

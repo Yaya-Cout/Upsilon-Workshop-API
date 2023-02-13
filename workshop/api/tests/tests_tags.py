@@ -51,14 +51,14 @@ class TagTest(TestCase):
 
     def test_tags_unauthenticated(self):
         """Test that unauthenticated users can only list tags."""
-        self.check_as_user()
+        self.check_as_user(401)
 
     def test_tags_authenticated(self):
         """Test that authenticated users can only list tags."""
         # Log in as the user
         self.client.login(username="user", password="password")
 
-        self.check_as_user()
+        self.check_as_user(403)
 
         # Logout
         self.client.logout()
@@ -88,10 +88,10 @@ class TagTest(TestCase):
         # Logout
         self.client.logout()
 
-    def check_as_user(self) -> None:
+    def check_as_user(self, error) -> None:
         """Run the tests for unauthenticated and authenticated users."""
         # Try to create a tag (should fail)
-        response = self.add_tag(403)
+        response = self.add_tag(error)
 
         # Try to update a tag (should fail)
         response = self.client.put(
@@ -104,13 +104,13 @@ class TagTest(TestCase):
         )
 
         # Check the response
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, error)
 
         # Try to delete a tag (should fail)
         response = self.client.delete("/tags/1/")
 
         # Check the response
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, error)
 
     def add_tag(self, excepted_status_code: int) -> dict:
         """Add a tag."""

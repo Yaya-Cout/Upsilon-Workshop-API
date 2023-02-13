@@ -142,7 +142,7 @@ class RatingsTest(TestCase):
                 "comment": "test"
             }
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
         # Try to edit a rating
         response = self.client.put(
@@ -153,11 +153,11 @@ class RatingsTest(TestCase):
                 "comment": "test"
             }
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
         # Try to delete a rating
         response = self.client.delete("/ratings/1/")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_ratings_authenticated(self):
         """Test that authenticated users can view, create, edit, and delete ratings."""

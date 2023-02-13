@@ -151,11 +151,11 @@ class ScriptsTest(TestCase):
                 "content": "print('Hello, world!')"
             }
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
         # Check that we can't remove scripts
         response = self.client.delete("/scripts/1/")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
         # Check we can't edit scripts
         response = self.client.put(
@@ -166,7 +166,7 @@ class ScriptsTest(TestCase):
                 "content": "print('Hello, world!')"
             }
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_scripts_authenticated(self):
         """Test that authenticated users can use their own private data."""

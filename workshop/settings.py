@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+
 from pathlib import Path
 import os
 
@@ -22,18 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # If DJANGO_SECURITY_KEY environnement variable is set, use it
-if os.environ.get("DJANGO_SECURITY_KEY"):
-    SECRET_KEY = os.environ.get("DJANGO_SECURITY_KEY")
-else:
-    SECRET_KEY = "django-insecure-!flkdn#38kmet0pqxwy_t^1v1)j=46i!ye=zgsdzzy5qgyb#n^"
-
+SECRET_KEY = (
+    os.environ.get("DJANGO_SECURITY_KEY")
+    or "django-insecure-!flkdn#38kmet0pqxwy_t^1v1)j=46i!ye=zgsdzzy5qgyb#n^"
+)
 # SECURITY WARNING: don't run with debug turned on in production!
 # If DEPLOY=1 environnement flag is set, use DEBUG=False
-if os.environ.get("DEPLOY") == "1":
-    DEBUG = False
-else:
-    DEBUG = True
-
+DEBUG = os.environ.get("DEPLOY") != "1"
 ALLOWED_HOSTS: list[str] = []
 
 
@@ -49,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "crispy_forms",
     'rest_framework',
+    'knox',
     'drf_spectacular',
     'django_filters',
     'workshop'
@@ -182,7 +179,16 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'knox.auth.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ]
+}
+
+REST_KNOX = {
+    'USER_SERIALIZER': 'knox.serializers.UserSerializer'
 }
 
 SPECTACULAR_SETTINGS = {

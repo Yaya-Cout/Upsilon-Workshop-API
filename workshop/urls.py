@@ -44,7 +44,8 @@ urlpatterns += [
         'rest_framework.urls',
         namespace='rest_framework'
         )
-    )
+    ),
+    path(r'api/auth/', include('knox.urls'))
 ]
 
 # OpenAPI

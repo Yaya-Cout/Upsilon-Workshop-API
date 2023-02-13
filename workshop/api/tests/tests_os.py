@@ -52,14 +52,14 @@ class OSTest(TestCase):
 
     def test_os_unauthenticated(self):
         """Test that unauthenticated users can only list OS."""
-        self.check_as_user()
+        self.check_as_user(401)
 
     def test_os_authenticated(self):
         """Test that authenticated users can only list OS."""
         # Log in as the user
         self.client.login(username="user", password="password")
 
-        self.check_as_user()
+        self.check_as_user(403)
 
         # Logout
         self.client.logout()
@@ -89,10 +89,10 @@ class OSTest(TestCase):
         # Logout
         self.client.logout()
 
-    def check_as_user(self) -> None:
+    def check_as_user(self, error) -> None:
         """Run the tests for unauthenticated and authenticated users."""
         # Try to create an OS (should fail)
-        response = self.add_os(403)
+        response = self.add_os(error)
 
         # Try to update an OS (should fail)
         response = self.client.put(
@@ -106,13 +106,13 @@ class OSTest(TestCase):
         )
 
         # Check the response
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, error)
 
         # Try to delete an OS (should fail)
         response = self.client.delete("/os/1/")
 
         # Check the response
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, error)
 
     def add_os(self, excepted_status_code: int) -> dict:
         """Add an OS."""
