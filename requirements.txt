@@ -4,6 +4,9 @@ django-filter
 markdown
 djangorestframework
 
+# Authentication
+django-rest-knox
+
 # MySQL database
 mysqlclient
 

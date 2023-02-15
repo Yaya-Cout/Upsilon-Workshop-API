@@ -94,7 +94,6 @@ class ScriptSerializer(serializers.HyperlinkedModelSerializer):
     # Handle the author field (can't be changed by the user, for now)
     def create(self, validated_data: dict) -> Script:
         """Create a new Script object."""
-        # TODO: Allow multiple authors, if both accept
         # Set the author to the user that created the script
         validated_data['author'] = self.context['request'].user
 

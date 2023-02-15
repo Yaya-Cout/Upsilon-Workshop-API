@@ -84,6 +84,9 @@ class ScriptViewSet(viewsets.ModelViewSet):
                 collaborators=self.request.user
             )
 
+        # Remove duplicates
+        queryset = queryset.distinct()
+
         return queryset.order_by('-created')
 
 

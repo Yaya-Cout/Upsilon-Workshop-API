@@ -62,11 +62,6 @@ class IsScriptOwnerOrReadOnly(BasePermission):
                 # Get the list of collaborators from the request
                 collaborators = data['collaborators']
 
-                # Convert the list of collaborators from the request to a list
-                # if this is not already the case
-                if not isinstance(collaborators, list):
-                    collaborators = [collaborators]
-
                 # Get the list of collaborators from the database
                 collaborators_db = list(obj.collaborators.all().values_list(
                     'id', flat=True

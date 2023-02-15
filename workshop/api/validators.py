@@ -1,4 +1,6 @@
 """Custom validators for Upsilon workshop models."""
+import json
+
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -36,7 +38,7 @@ def validate_email(value):
 def validate_script_files(value):
     """Validate the script file."""
     # Check file size
-    if len(str(value)) > MAX_SCRIPT_SIZE:
+    if len(json.dumps(value)) > MAX_SCRIPT_SIZE:
         raise ValidationError(
             _('The file is too large (%(size)s bytes). '
               'The maximum file size is %(max_size)s bytes.'),

@@ -1,4 +1,6 @@
 """Tests for /scripts/ endpoint."""
+import json
+
 from django.test import TestCase
 
 # Import User model to create a superuser
@@ -319,6 +321,53 @@ class ScriptsTest(TestCase):
         response = self.client.delete(self.admin_script['url'])
         self.assertEqual(response.status_code, 403)
 
+        # Log in as the admin
+        logged = self.client.login(username=self.admin['username'],
+                                   password=self.admin['password'])
+        self.assertTrue(logged)
+
+        # Add the user as a collaborator
+        response = self.client.patch(
+            self.admin_script['url'],
+            {
+                "collaborators": [
+                    self.user['url'],
+                    self.user2['url']
+                ]
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Log in as the user
+        logged = self.client.login(username=self.user['username'],
+                                   password=self.user['password'])
+        self.assertTrue(logged)
+
+        # Check that we can read the shared script
+        response = self.client.get(self.admin_script['url'])
+        self.assertEqual(response.status_code, 200)
+
+        # Check that we can edit the shared script
+        response = self.client.put(
+            self.admin_script['url'],
+            {
+                "name": "admin_script2",
+                "language": "python",
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    },
+                    {
+                        "name": "test2.py",
+                        "content": "from test import *"
+                    }
+                ]
+            },
+            content_type="application/json"
+        )
+
     def test_scripts_admin(self):
         """Test that admins can use all data."""
         # Log in as the admin
@@ -395,9 +444,9 @@ class ScriptsTest(TestCase):
 
     def test_scripts_invalid(self):
         """Test that invalid requests are rejected."""
-        # Log in as the user
-        self.client.login(username=self.user['username'],
-                          password=self.user['password'])
+        # Log in as the admin
+        self.client.login(username=self.admin['username'],
+                          password=self.admin['password'])
 
         # Check that we can't create a script with no name
         response = self.client.post(
@@ -410,7 +459,8 @@ class ScriptsTest(TestCase):
                         "content": "print('Hello, world!')"
                     }
                 ]
-            }
+            },
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 400)
 
@@ -425,7 +475,8 @@ class ScriptsTest(TestCase):
                         "content": "print('Hello, world!')"
                     }
                 ]
-            }
+            },
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 400)
 
@@ -435,7 +486,8 @@ class ScriptsTest(TestCase):
             {
                 "name": "test",
                 "language": "python"
-            }
+            },
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 400)
 
@@ -451,7 +503,8 @@ class ScriptsTest(TestCase):
                         "content": "print('Hello, world!')"
                     }
                 ]
-            }
+            },
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 400)
 
@@ -487,7 +540,8 @@ class ScriptsTest(TestCase):
                         "name": "test2.py",
                     }
                 ]
-            }
+            },
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 400)
 
@@ -505,7 +559,8 @@ class ScriptsTest(TestCase):
                         "content": "from test import *"
                     }
                 ]
-            }
+            },
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 400)
 
@@ -515,7 +570,8 @@ class ScriptsTest(TestCase):
                 "name": "test",
                 "language": "python",
                 "files": []
-            }
+            },
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 400)
 
@@ -525,9 +581,103 @@ class ScriptsTest(TestCase):
                 "name": "test",
                 "language": "python",
                 "files": [{}]
-            }
+            },
+            content_type="application/json"
         )
         self.assertEqual(response.status_code, 400)
+
+        # Check that we can't create a file with extra fields
+        response = self.client.post(
+            "/scripts/",
+            {
+                "name": "test",
+                "language": "python",
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')",
+                        "extra": "extra"
+                    }
+                ]
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 400)
+
+        # Check that we can't create a file with no extension
+        self.create_script_with_file_name("test", 400)
+
+        # Check that we can't create a file with a slash
+        self.create_script_with_file_name("test.py/", 400)
+        self.create_script_with_file_name("/test.py", 400)
+        self.create_script_with_file_name("test/test.py", 400)
+
+        # Check that files with the same name are rejected
+        response = self.client.post(
+            "/scripts/",
+            {
+                "name": "test",
+                "language": "python",
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    },
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    }
+                ]
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 400)
+
+        # Check that we can't create a script that is bigger than the limit
+        # (100 * 1024 bytes)
+        # Generate the base files
+        files = [
+            {
+                "name": "test.py",
+                "content": ""
+            }
+        ]
+
+        # Generate the content that is too big based on the payload size
+        content = "a" * (100 * 1024 - len(json.dumps(files)) + 1)
+        files[0]['content'] = content
+
+        # Assert that the payload is the correct size
+        self.assertEqual(len(json.dumps(files)), 100 * 1024 + 1)
+
+        response = self.client.post(
+            "/scripts/",
+            {
+                "name": "test",
+                "language": "python",
+                "files": files
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def create_script_with_file_name(self, file_name, expected_status_code):
+        """Helper function to create a script with a file name."""
+        response = self.client.post(
+            "/scripts/",
+            {
+                "name": "test",
+                "language": "python",
+                "files": [
+                    {
+                        "name": file_name,
+                        "content": "print('Hello, world!')"
+                    }
+                ]
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, expected_status_code)
 
     def test_private_scripts(self):
         """Test that private scripts are not visible to other users."""
