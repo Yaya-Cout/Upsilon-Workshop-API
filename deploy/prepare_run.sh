@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/sh
 # Script to prepare a run of the application
 echo "Preparing run..."
 
