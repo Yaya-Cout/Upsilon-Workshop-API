@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     'rest_framework',
     'knox',
+    'corsheaders',
     'drf_spectacular',
     'django_filters',
     'workshop'
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -171,6 +173,7 @@ CSRF_COOKIE_SECURE = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Django REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
@@ -187,13 +190,21 @@ REST_FRAMEWORK = {
     ]
 }
 
+# Knox settings (set the user serializer to use)
 REST_KNOX = {
     'USER_SERIALIZER': 'knox.serializers.UserSerializer'
 }
 
+# Spectacular settings (for the API documentation)
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Upsilon Workshop API',
     'DESCRIPTION': 'API for the Upsilon Workshop',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+# CORS settings
+CORS_ORIGIN_REGEX_WHITELIST = [
+    r"http(?s)://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):3000",
+    r"http(?s)://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):5173",
+]

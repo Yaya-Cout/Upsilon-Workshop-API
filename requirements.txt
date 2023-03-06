@@ -7,6 +7,9 @@ djangorestframework
 # Authentication
 django-rest-knox
 
+# CORS headers
+django-cors-headers
+
 # MySQL database
 mysqlclient
 
