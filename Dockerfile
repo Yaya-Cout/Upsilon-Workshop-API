@@ -36,11 +36,6 @@ ENV PATH="/Upsilon-Workshop-API-Django/venv/bin:${PATH}"
 # Install the dependencies
 RUN pip3 install -r requirements.txt gunicorn
 
-# Remove the build dependencies (gcc, musl-dev, python3-dev, mariadb-connector-c-dev)
-USER root
-RUN apk del gcc musl-dev python3-dev
-USER workshop
-
 # RUN python3 manage.py migrate
 RUN python3 manage.py collectstatic --noinput
 
@@ -51,7 +46,7 @@ RUN sed -i 's/ALLOWED_HOSTS: list\[str\] = \[\]/ALLOWED_HOSTS: list\[str\] = \["
 EXPOSE 80
 
 # Entrypoint
-CMD ["sh", "-c", "./deploy/prepare_run.sh && python3 $(which gunicorn) workshop.wsgi --bind 0.0.0.0:80"]
+CMD ["sh", "-c", "sh ./deploy/prepare_run.sh && python3 $(which gunicorn) workshop.wsgi --bind 0.0.0.0:80"]
 
 
 # Deployment image (no build dependencies)

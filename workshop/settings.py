@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "crispy_forms",
+    'crispy_forms',
+    'crispy_bootstrap5',
+    'crispy_bootstrap3',
     'rest_framework',
     'knox',
     'corsheaders',
@@ -208,3 +210,6 @@ CORS_ORIGIN_REGEX_WHITELIST = [
     r"http(?s)://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):3000",
     r"http(?s)://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):5173",
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

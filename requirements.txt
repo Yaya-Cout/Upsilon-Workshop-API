@@ -18,6 +18,8 @@ drf-spectacular
 
 # For django-filter bootstrap styling
 django-crispy-forms
+crispy-bootstrap5
+crispy-bootstrap3
 
 # Testing dependencies
 pytest
