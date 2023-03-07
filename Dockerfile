@@ -52,6 +52,9 @@ CMD ["sh", "-c", "sh ./deploy/prepare_run.sh && python3 $(which gunicorn) worksh
 # Deployment image (no build dependencies)
 FROM alpine:latest
 
+# Set DEPLOY=1 environnement variable
+ENV DEPLOY=1
+
 # Install dependencies
 RUN apk update && apk upgrade --available && apk add --no-cache mariadb-client mariadb-connector-c tzdata python3
 
