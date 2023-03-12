@@ -36,6 +36,7 @@ ALLOWED_HOSTS: list[str] = []
 # Application definition
 
 INSTALLED_APPS = [
+    "workshop",
     "django.contrib.admindocs",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -50,8 +51,7 @@ INSTALLED_APPS = [
     'knox',
     'corsheaders',
     'drf_spectacular',
-    'django_filters',
-    'workshop'
+    'django_filters'
 ]
 
 MIDDLEWARE = [
@@ -174,6 +174,9 @@ CSRF_COOKIE_SECURE = True
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Set our custom user model
+AUTH_USER_MODEL = "workshop.User"
 
 # Django REST Framework settings
 REST_FRAMEWORK = {

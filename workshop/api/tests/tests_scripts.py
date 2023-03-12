@@ -4,7 +4,7 @@ import json
 from django.test import TestCase
 
 # Import User model to create a superuser
-from django.contrib.auth.models import User
+from workshop.api.models import User
 
 
 class ScriptsTest(TestCase):

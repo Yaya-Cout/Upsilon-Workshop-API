@@ -2,7 +2,7 @@
 from django.test import TestCase
 
 # Import the models we're testing
-from django.contrib.auth.models import User
+from workshop.api.models import User
 
 
 class GroupsTest(TestCase):
@@ -224,7 +224,7 @@ class GroupsUsersTest(TestCase):
         # Add the user to the group
         # TODO: Try to do this with patch
         response = self.client.put(
-            "/users/1/",
+            "/users/user/",
             {
                 "username": "user",
                 "email": "user@example.com",
@@ -241,7 +241,7 @@ class GroupsUsersTest(TestCase):
         """Test that unauthenticated users can only list groups."""
         # Ensure that we can't add users to groups
         response = self.client.put(
-            "/users/1/",
+            "/users/user/",
             {
                 "username": "user",
                 "email": "user@example.com",
@@ -253,7 +253,7 @@ class GroupsUsersTest(TestCase):
 
         # Ensure we can't remove users from groups
         response = self.client.put(
-            "/users/1/",
+            "/users/user/",
             {
                 "username": "user",
                 "email": "user@example.com",
@@ -270,7 +270,7 @@ class GroupsUsersTest(TestCase):
 
         # Ensure that we can't add ourselves to groups
         response = self.client.put(
-            "/users/1/",
+            "/users/user/",
             {
                 "username": "user",
                 "email": "user@example.com",
@@ -282,7 +282,7 @@ class GroupsUsersTest(TestCase):
 
         # Ensure that we can't add other users to groups
         response = self.client.put(
-            "/users/2/",
+            "/users/admin/",
             {
                 "username": "admin",
                 "email": "admin@example.com",
@@ -294,7 +294,7 @@ class GroupsUsersTest(TestCase):
 
         # Ensure we can't remove ourselves from groups
         response = self.client.put(
-            "/users/1/",
+            "/users/user/",
             {
                 "username": "user",
                 "email": "user@example.com",
@@ -306,7 +306,7 @@ class GroupsUsersTest(TestCase):
 
         # Ensure we can't remove other users from groups
         response = self.client.put(
-            "/users/2/",
+            "/users/admin/",
             {
                 "username": "admin",
                 "email": "admin@example.com",
@@ -326,7 +326,7 @@ class GroupsUsersTest(TestCase):
 
         # Ensure that we can add users to groups
         response = self.client.put(
-            "/users/1/",
+            "/users/user/",
             {
                 "username": "user",
                 "email": "user@example.com",
@@ -338,10 +338,34 @@ class GroupsUsersTest(TestCase):
 
         # Ensure that we can remove users from groups
         response = self.client.put(
-            "/users/1/",
+            "/users/user/",
             {
                 "username": "user",
                 "email": "user@example.com",
+                "groups": []
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Ensure that we can add ourselves to groups
+        response = self.client.put(
+            "/users/admin/",
+            {
+                "username": "admin",
+                "email": "admin@example.com",
+                "groups": ["/groups/1/", "/groups/2/"]
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Ensure that we can remove ourselves from groups
+        response = self.client.put(
+            "/users/admin/",
+            {
+                "username": "admin",
+                "email": "admin@example.com",
                 "groups": []
             },
             content_type="application/json"

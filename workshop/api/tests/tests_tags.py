@@ -2,7 +2,7 @@
 from django.test import TestCase
 
 # Import the models we're testing
-from django.contrib.auth.models import User
+from workshop.api.models import User
 
 
 class TagTest(TestCase):

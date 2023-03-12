@@ -2,7 +2,7 @@
 from django.test import TestCase
 
 # Import User model to create a superuser
-from django.contrib.auth.models import User
+from workshop.api.models import User
 
 
 class RatingsTest(TestCase):
@@ -178,8 +178,8 @@ class RatingsTest(TestCase):
                     self.assertIn("url", item)
                     continue
                 if field == "user":
-                    # Admin has id 1, user has id 2
-                    user_id = 1 if rating["comment"] == "This is a comment" else 2
+                    # Get the correct user id
+                    user_id = "user" if rating["comment"] == "This is a comment" else "admin"
 
                     # Assert that the user field is the correct url
                     self.assertEqual(item[field], f"http://testserver/users/{user_id}/")
@@ -251,8 +251,8 @@ class RatingsTest(TestCase):
                     self.assertIn("url", item)
                     continue
                 if field == "user":
-                    # Admin has id 1, user has id 2
-                    user_id = 1 if rating["comment"] == "This is a comment" else 2
+                    # Get the correct user id
+                    user_id = "user" if rating["comment"] == "This is a comment" else "admin"
 
                     # Assert that the user field is the correct url
                     self.assertEqual(item[field], f"http://testserver/users/{user_id}/")

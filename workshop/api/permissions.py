@@ -64,13 +64,8 @@ class IsScriptOwnerOrReadOnly(BasePermission):
 
                 # Get the list of collaborators from the database
                 collaborators_db = list(obj.collaborators.all().values_list(
-                    'id', flat=True
+                    'username', flat=True
                 ))
-
-                # Convert the list of collaborators from the database to a list
-                # of str ids
-                collaborators_db = [str(collaborator) for collaborator in
-                                    collaborators_db]
 
                 # Convert the list of collaborators from the request to a list
                 # of ids

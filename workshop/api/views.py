@@ -1,10 +1,9 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
-from django_filters import rest_framework as filters
 
 # Import the models from the models.py file
-from workshop.api.models import Script, Rating, OS, Tag
+from workshop.api.models import Script, Rating, OS, Tag, User
 
 # Import the serializers from the serializers.py file
 from workshop.api.serializers import UserSerializer, GroupSerializer, ScriptSerializer, RatingSerializer, OSSerializer, TagSerializer, RegisterSerializer

@@ -2,7 +2,7 @@
 from django.test import TestCase
 
 # Import the models we're testing
-from django.contrib.auth.models import User
+from workshop.api.models import User
 
 
 class UsersTest(TestCase):
@@ -43,7 +43,7 @@ class UsersTest(TestCase):
 
         # Edit an user
         response = self.client.put(
-            "/users/2/",
+            "/users/user/",
             {
                 "username": "user",
                 "email": "user@example.com",
@@ -53,7 +53,7 @@ class UsersTest(TestCase):
         )
 
         # Remove an user
-        response = self.client.delete("/users/2/")
+        response = self.client.delete("/users/user/")
         self.assertEqual(response.status_code, 401)
 
     def test_users_authenticated(self):
@@ -71,7 +71,7 @@ class UsersTest(TestCase):
 
         # Edit the user
         response = self.client.put(
-            "/users/1/",
+            "/users/user/",
             {
                 "username": "user-edited",
                 "email": "user@example.com",
@@ -83,7 +83,7 @@ class UsersTest(TestCase):
 
         # Edit another user
         response = self.client.put(
-            "/users/2/",
+            "/users/admin/",
             {
                 "username": "admin-edited",
                 "email": "admin@example.com",
@@ -111,7 +111,7 @@ class UsersTest(TestCase):
 
         # Edit our user
         response = self.client.put(
-            "/users/2/",
+            "/users/admin/",
             {
                 "username": "admin-edited",
                 "email": "admin@example.com",
@@ -123,7 +123,7 @@ class UsersTest(TestCase):
 
         # Edit another user
         response = self.client.put(
-            "/users/1/",
+            "/users/user/",
             {
                 "username": "user-edited",
                 "email": "user@example.com",
@@ -139,7 +139,7 @@ class UsersTest(TestCase):
     def test_users_detail_unauthenticated(self):
         """Test that unauthenticated users can only use public data."""
         # Get the response from the API
-        response = self.client.get("/users/1/")
+        response = self.client.get("/users/user/")
         self.assertEqual(response.status_code, 200)
 
         # Check that only public fields are returned
@@ -151,14 +151,14 @@ class UsersTest(TestCase):
         self.client.login(username="user", password="password")
 
         # Get the response from the API
-        response = self.client.get("/users/1/")
+        response = self.client.get("/users/user/")
         self.assertEqual(response.status_code, 200)
 
         # Check that private fields are returned
         self.ensure_private_fields(response.data)
 
         # Get user 2
-        response = self.client.get("/users/2/")
+        response = self.client.get("/users/admin/")
         self.assertEqual(response.status_code, 200)
 
         # Check that only public fields are returned
@@ -170,7 +170,7 @@ class UsersTest(TestCase):
         self.client.login(username="admin", password="password")
 
         # Get the response from the API
-        response = self.client.get("/users/1/")
+        response = self.client.get("/users/user/")
         self.assertEqual(response.status_code, 200)
 
         # Check that private fields are returned
@@ -182,13 +182,13 @@ class UsersTest(TestCase):
         self.client.login(username="user", password="password")
 
         # Get the response from the API
-        response = self.client.get("/users/100/")
+        response = self.client.get("/users/nonexisting/")
         self.assertEqual(response.status_code, 404)
 
     def test_users_edit_unauthenticated(self):
         """Test that unauthenticated users cannot edit users."""
         # Get the response from the API
-        response = self.client.put("/users/1/", self.user,
+        response = self.client.put("/users/user/", self.user,
                                    content_type="application/json")
         self.assertEqual(response.status_code, 401)
 
@@ -199,7 +199,7 @@ class UsersTest(TestCase):
 
         ### Test that users can edit themselves
         # Get the response from the API
-        response = self.client.put("/users/1/", self.user,
+        response = self.client.put("/users/user/", self.user,
                                    content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
@@ -212,7 +212,7 @@ class UsersTest(TestCase):
 
         ### Test that users cannot edit other users
         # Get the response from the API
-        response = self.client.put("/users/2/", self.admin,
+        response = self.client.put("/users/admin/", self.admin,
                                    content_type="application/json")
         self.assertEqual(response.status_code, 403)
 
@@ -222,7 +222,7 @@ class UsersTest(TestCase):
         self.client.login(username="admin", password="password")
 
         # Get the response from the API
-        response = self.client.put("/users/1/", self.user, content_type="application/json")
+        response = self.client.put("/users/user/", self.user, content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
         # Check that private fields are returned
@@ -244,7 +244,7 @@ class UsersTest(TestCase):
     def test_users_delete_unauthenticated(self):
         """Test that unauthenticated users cannot delete users."""
         # Get the response from the API
-        response = self.client.delete("/users/1/")
+        response = self.client.delete("/users/user/")
         self.assertEqual(response.status_code, 401)
 
     def test_users_delete_authenticated(self):
@@ -253,7 +253,7 @@ class UsersTest(TestCase):
         self.client.login(username="user", password="password")
 
         # Get the response from the API
-        response = self.client.delete("/users/2/")
+        response = self.client.delete("/users/admin/")
         self.assertEqual(response.status_code, 403)
 
         # List all users
@@ -266,7 +266,7 @@ class UsersTest(TestCase):
         self.client.login(username="admin", password="password")
 
         # Get the response from the API
-        response = self.client.delete("/users/1/")
+        response = self.client.delete("/users/user/")
         self.assertEqual(response.status_code, 204)
 
     def ensure_public_fields(self, user: dict) -> None:

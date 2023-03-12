@@ -1,9 +1,10 @@
 """Database models for the Upsilon Workshop app."""
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils.translation import gettext_lazy as _
 
 # Import the User and Group models from the Django auth module
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import AbstractUser
 
 # Import uuid to generate unique IDs
 import uuid
@@ -14,11 +15,37 @@ from workshop.api.validators import validate_language, validate_email, validate_
 # Max file size is 100 KB
 MAX_FILE_SIZE = 100 * 1024
 
-# Configure user to make email required
-User._meta.get_field('email')._unique = True
-User._meta.get_field('email').blank = False
-User._meta.get_field('email').null = False
-User._meta.get_field('email').validators = [validate_email]
+
+class User(AbstractUser):
+    """User model."""
+
+    # The email address of the user
+    email = models.EmailField(
+        _("email address"),
+        validators=[validate_email]
+    )
+
+    # Remove the id field
+    id = None
+
+    # The username is the primary key
+    username = models.CharField(
+        _("username"),
+        max_length=150,
+        unique=True,
+        primary_key=True,
+        help_text=_(
+            "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+        ),
+        validators=[AbstractUser.username_validator],
+        error_messages={
+            "unique": _("A user with that username already exists."),
+        },
+    )
+
+    def __str__(self) -> str:
+        """Return a string representation of the model."""
+        return f"{self.username}"
 
 
 class UUIDModel(models.Model):

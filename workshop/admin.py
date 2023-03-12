@@ -1,6 +1,10 @@
 from django.contrib import admin
 
-from workshop.api.models import Script, Rating, OS, Tag
+from workshop.api.models import Script, Rating, OS, Tag, User
+
+# We need to import UserAdmin after importing User, otherwise we get an error
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+
 
 admin.site.site_header = "Workshop administration"
 
@@ -42,6 +46,11 @@ class TagAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     ordering = ('name',)
 
+
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+    pass
+
 # This syntax is easier to write, but it doesn't work with the search and filter
 # fields
-# admin.site.register(Tag)
+# admin.site.register(User)
