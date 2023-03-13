@@ -14,14 +14,14 @@ spec:
         cpu: "0.25"
         memory: "950Mi"
         ports:
-        - port: 80
+        - port: 8000
           expose: true
 
       traits:
       - type: napptive-ingress # Expose port 80 (workshop API server) to the internet
         properties:
           name: django
-          port: 80
+          port: 8000
           path: /
       - type: cpuscaler # Automatically scale up/down based on CPU usage
       - type: scaler # Allow scaling (we use 2 replicas in case of a crash of one of the pods)

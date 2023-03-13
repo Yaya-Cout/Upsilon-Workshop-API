@@ -46,7 +46,7 @@ RUN sed -i 's/ALLOWED_HOSTS: list\[str\] = \[\]/ALLOWED_HOSTS: list\[str\] = \["
 EXPOSE 80
 
 # Entrypoint
-CMD ["sh", "-c", "sh ./deploy/prepare_run.sh && python3 $(which gunicorn) workshop.wsgi --bind 0.0.0.0:80"]
+CMD ["sh", "-c", "sh ./deploy/prepare_run.sh && python3 $(which gunicorn) workshop.wsgi --bind 0.0.0.0:8000"]
 
 
 # Deployment image (no build dependencies)
@@ -80,4 +80,4 @@ WORKDIR /home/workshop/Upsilon-Workshop-API-Django
 EXPOSE 80
 
 # Entrypoint
-CMD ["sh", "-c", "source venv/bin/activate && deactivate && source venv/bin/activate && sh ./deploy/prepare_run.sh && python3 $(which gunicorn) workshop.wsgi --bind 0.0.0.0:80"]
+CMD ["sh", "-c", "source venv/bin/activate && deactivate && source venv/bin/activate && sh ./deploy/prepare_run.sh && python3 $(which gunicorn) workshop.wsgi --bind 0.0.0.0:8000"]
