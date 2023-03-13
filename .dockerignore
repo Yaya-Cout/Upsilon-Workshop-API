@@ -29,6 +29,8 @@ static/
 deploy/secrets/
 deploy/old/
 mysql.cnf
+dump.sql
+dump.sh
 
 # Ignore Dockerfile
 Dockerfile
