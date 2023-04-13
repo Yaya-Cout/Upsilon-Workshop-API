@@ -36,9 +36,9 @@ ALLOWED_HOSTS: list[str] = []
 # Application definition
 
 INSTALLED_APPS = [
+    "django.contrib.admin",
     "workshop",
     "django.contrib.admindocs",
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -212,6 +212,7 @@ SPECTACULAR_SETTINGS = {
 CORS_ORIGIN_REGEX_WHITELIST = [
     r"http(?s)://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):3000",
     r"http(?s)://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):5173",
+    "https://yaya-cout.github.io",
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
