@@ -157,7 +157,7 @@ class RegisterSerializer(serializers.HyperlinkedModelSerializer):
         """Meta class for the RegisterSerializer."""
 
         model = User
-        fields = ['username', 'password', 'email', 'url', 'id']
+        fields = ['username', 'password', 'email', 'url']
 
         # Set the write_only fields
         write_only_fields = ['password']
@@ -172,8 +172,3 @@ class RegisterSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True}
         }
-
-    def create(self, validated_data: dict) -> User:
-        """Create a new User object."""
-        # Create and return the user
-        return User.objects.create_user(**validated_data)

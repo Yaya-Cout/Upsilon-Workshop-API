@@ -1,8 +1,11 @@
 """Custom validators for Upsilon workshop models."""
 import json
+import re
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.core import validators
+from django.utils.deconstruct import deconstructible
 
 ALLOWED_LANGUAGES = [
     'python',
@@ -108,3 +111,15 @@ def validate_script_files(value):
             _('The file is not a valid JSON file.'
               'The file names are not unique.'),
         )
+
+
+@deconstructible
+class URLUsernameValidator(validators.RegexValidator):
+    """Validate the username of a user (used in the URL)."""
+
+    regex = r"^[\w@+-]+\Z"
+    message = _(
+        "Enter a valid username. This value may contain only letters, "
+        "numbers, and @/+/-/_ characters."
+    )
+    flags = re.ASCII

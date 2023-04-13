@@ -10,7 +10,7 @@ from django.contrib.auth.models import AbstractUser
 import uuid
 
 # Import the validators from the validators.py file
-from workshop.api.validators import validate_language, validate_email, validate_script_files
+from workshop.api.validators import validate_language, validate_email, validate_script_files, URLUsernameValidator
 
 # Max file size is 100 KB
 MAX_FILE_SIZE = 100 * 1024
@@ -35,9 +35,9 @@ class User(AbstractUser):
         unique=True,
         primary_key=True,
         help_text=_(
-            "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+            "Required. 150 characters or fewer. Letters, digits and @/+/-/_ only."
         ),
-        validators=[AbstractUser.username_validator],
+        validators=[URLUsernameValidator()],
         error_messages={
             "unique": _("A user with that username already exists."),
         },
