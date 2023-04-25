@@ -172,3 +172,8 @@ class RegisterSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True}
         }
+
+    def create(self, validated_data: dict) -> User:
+        """Create a new User object."""
+        # Create and return the user (we need it to be hashed)
+        return User.objects.create_user(**validated_data)
