@@ -26,7 +26,9 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, \
 
 urlpatterns = [
     path('admin/doc/', include('django.contrib.admindocs.urls')),
-    path("admin/", admin.site.urls),]
+    path("admin/", admin.site.urls),
+    path("current_user/", views.CurrentUserView.as_view()),
+]
 
 router = routers.DefaultRouter()
 # We don't want conflict with UserViewSet and RegisterViewSet

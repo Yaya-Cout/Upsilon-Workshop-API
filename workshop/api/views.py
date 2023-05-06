@@ -1,6 +1,8 @@
 from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 # Import the models from the models.py file
 from workshop.api.models import Script, Rating, OS, Tag, User
@@ -131,6 +133,9 @@ class TagViewSet(viewsets.ModelViewSet):
     filterset_fields = ('name', 'description')
 
 
+# Special views
+
+
 class RegisterViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be registered.
@@ -139,3 +144,17 @@ class RegisterViewSet(viewsets.ModelViewSet):
     queryset = User.objects.none()
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
+
+
+class CurrentUserView(APIView):
+    """
+    API endpoint that allows the current user to be viewed.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request) -> Response:
+        """
+        Return the current user.
+        """
+        serializer = UserSerializer(request.user, context={'request': request})
+        return Response(serializer.data)
