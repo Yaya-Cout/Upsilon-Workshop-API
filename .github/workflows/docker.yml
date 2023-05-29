@@ -27,4 +27,5 @@ jobs:
         with:
           push: true
           tags: yayacout/upsilon-workshop:latest
-          platforms: linux/amd64,linux/arm/v8
+          # platforms: linux/amd64,linux/arm/v8
+          platforms: linux/amd64

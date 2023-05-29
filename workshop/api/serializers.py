@@ -52,6 +52,40 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         representation = super(UserSerializer, self)\
             .to_representation(instance)
 
+        # Remove private scripts querying the database with a filter
+        queryset = Script.objects.filter(author=instance, is_public=True)
+        queryset |= Script.objects.filter(
+            author=instance,
+            collaborators=self.context['request'].user
+        )
+        queryset = queryset.distinct()
+        representation['scripts'] = ScriptSerializer(
+            queryset,
+            many=True,
+            context={'request': self.context['request']}
+        ).data
+        representation['scripts'] = [script['url']
+                                     for script in representation['scripts']]
+
+        # Remove private collaborations querying the database with a filter
+        queryset = Script.objects.filter(collaborators=instance,
+                                         is_public=True)
+        queryset |= Script.objects.filter(
+            collaborators=instance,
+            author=self.context['request'].user
+        )
+        queryset |= Script.objects.filter(collaborators=instance)\
+            .filter(collaborators=self.context['request'].user)
+        queryset = queryset.distinct()
+        representation['collaborations'] = ScriptSerializer(
+            queryset,
+            many=True,
+            context={'request': self.context['request']}
+        ).data
+        representation['collaborations'] = [
+            script['url'] for script in representation['collaborations']
+        ]
+
         # Return only the url and username
         return {
             'url': representation['url'],
