@@ -210,8 +210,8 @@ SPECTACULAR_SETTINGS = {
 
 # CORS settings
 CORS_ORIGIN_REGEX_WHITELIST = [
-    r"http(?s)://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):3000",
-    r"http(?s)://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):5173",
+    r"https?://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):3000",
+    r"https?://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):5173",
     "https://yaya-cout.github.io",
 ]
 
