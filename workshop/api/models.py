@@ -199,7 +199,7 @@ class Script(UUIDModel):
     views = models.IntegerField(default=0)
 
     # The licence of the script
-    licence = models.CharField(max_length=100, default='MIT')
+    licence = models.CharField(max_length=100, default='Unspecified')
 
     # The compatibility of the script
     # TODO: Forbid empty values
