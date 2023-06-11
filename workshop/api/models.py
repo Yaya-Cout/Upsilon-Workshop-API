@@ -194,7 +194,7 @@ class Script(UUIDModel):
     short_description = models.TextField(blank=True, max_length=100)
 
     # The long description of the script
-    long_description = models.TextField(blank=True, max_length=2000)
+    long_description = models.TextField(blank=True, max_length=10000)
 
     # The number of times the script has been downloaded
     # downloads = models.IntegerField(default=0)
