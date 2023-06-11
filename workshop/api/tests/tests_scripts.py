@@ -37,7 +37,8 @@ class ScriptsTest(TestCase):
             "modified",
             "language",
             "version",
-            "description",
+            "short_description",
+            "long_description",
             "ratings",
             "author",
             "collaborators",
@@ -78,7 +79,8 @@ class ScriptsTest(TestCase):
             {
                 "name": "admin_script",
                 "language": "python",
-                "description": "test",
+                "short_description": "test",
+                "long_description": "test long",
                 "files": [
                     {
                         "name": "test.py",
@@ -109,7 +111,8 @@ class ScriptsTest(TestCase):
             {
                 "name": "user_script",
                 "language": "python",
-                "description": "test",
+                "short_description": "test",
+                "long_description": "test long",
                 "files": [
                     {
                         "name": "test.py",

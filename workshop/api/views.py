@@ -53,13 +53,13 @@ class ScriptViewSet(viewsets.ModelViewSet):
     ]
 
     search_fields = (
-        'name', 'description', 'files', '^licence', 'version', 'language',
-        'author__username', 'compatibility__name',
+        'name', 'short_description', 'long_description', 'files', '^licence',
+        'version', 'language', 'author__username', 'compatibility__name',
     )
 
     filterset_fields = (
-        'name', 'description', 'licence', 'version', 'language',
-        'author__username', 'compatibility__name',
+        'name', 'short_description', 'long_description', 'licence', 'version',
+        'language', 'author__username', 'compatibility__name',
     )
 
     def retrieve(self, request, *args, **kwargs):

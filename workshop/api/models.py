@@ -140,7 +140,8 @@ class Script(UUIDModel):
     - The date the script was last modified
     - The language the script is written in
     - The version of the script
-    - The description of the script
+    - The short description of the script
+    - The long description of the script
     - The comments on the script
     - The number of times the script has been downloaded
     - The number of times the script has been viewed
@@ -189,8 +190,11 @@ class Script(UUIDModel):
     # The version of the script
     version = models.CharField(max_length=100, default='1.0')
 
-    # The description of the script
-    description = models.TextField(blank=True)
+    # The short description of the script
+    short_description = models.TextField(blank=True, max_length=100)
+
+    # The long description of the script
+    long_description = models.TextField(blank=True, max_length=2000)
 
     # The number of times the script has been downloaded
     # downloads = models.IntegerField(default=0)

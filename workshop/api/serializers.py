@@ -117,9 +117,9 @@ class ScriptSerializer(serializers.HyperlinkedModelSerializer):
 
         model = Script
         fields = ['url', 'name', 'created', 'modified', 'language', 'version',
-                  'description', 'ratings', 'author', 'collaborators', 'files',
-                  'licence', 'compatibility', 'views', 'id', 'tags',
-                  'is_public']
+                  'short_description', 'long_description', 'ratings', 'author',
+                  'collaborators', 'files', 'licence', 'compatibility', 'views',
+                  'id', 'tags', 'is_public']
 
         # Set the read_only fields
         read_only_fields = ['created', 'modified', 'downloads', 'views',
