@@ -69,7 +69,7 @@ class ScriptViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         # If the user is the admin, get all scripts
-        if self.request.user.is_staff:
+        if self.request.user.is_superuser:
             return super(ScriptViewSet, self).get_queryset()
         # Get public scripts
         queryset = Script.objects.filter(is_public=True)

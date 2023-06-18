@@ -25,7 +25,7 @@ class IsOwnerOrReadOnly(BasePermission):
 
     def has_object_permission(self, request, view: object, obj: object) -> bool:
         """Check if the user has permission to access the object."""
-        is_admin = request.user and request.user.is_staff
+        is_admin = request.user and request.user.is_superuser
         is_owner = obj == request.user
         is_allowed = is_admin or is_owner
         return request.method in SAFE_METHODS or is_allowed
@@ -36,7 +36,7 @@ class IsScriptOwnerOrReadOnly(BasePermission):
 
     def has_object_permission(self, request, view: object, obj: object) -> bool:
         """Check if the user has permission to access the object."""
-        is_admin = request.user and request.user.is_staff
+        is_admin = request.user and request.user.is_superuser
 
         # To check if the user is the owner of the script, we need to check if
         # the user is in the list of authors of the script
@@ -88,7 +88,7 @@ class IsRatingOwnerOrReadOnly(BasePermission):
 
     def has_object_permission(self, request, view: object, obj: object) -> bool:
         """Check if the user has permission to access the object."""
-        is_admin = request.user and request.user.is_staff
+        is_admin = request.user and request.user.is_superuser
         is_owner = obj.user == request.user
         is_allowed = is_admin or is_owner
 
