@@ -166,7 +166,8 @@ STATIC_URL = "/static/"
 
 # CSRF trusted origins (endpoint url for the API and the frontend)
 CSRF_TRUSTED_ORIGINS = [
-    "https://django-cdqivkhudi9mmk5gqgb0.apps.playground.napptive.dev"
+    "https://django-cdqivkhudi9mmk5gqgb0.apps.playground.napptive.dev",
+    "https://yann.n1n1.xyz"
 ]
 CSRF_COOKIE_SECURE = True
 
