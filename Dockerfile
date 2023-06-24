@@ -6,7 +6,7 @@ ENV DEPLOY=1
 # Install dependencies
 RUN apk update
 RUN apk upgrade --available
-RUN apk add --no-cache git python3 python3-dev py-pip tzdata mariadb-client mariadb-connector-c-dev gcc musl-dev rust cargo libffi-dev
+RUN apk add --no-cache git python3 python3-dev py-pip tzdata mariadb-client mariadb-connector-c-dev gcc musl-dev rust cargo libffi-dev mariadb-dev
 RUN pip3 install --upgrade virtualenv wheel
 
 # Add an user
