@@ -274,6 +274,42 @@ class UsersTest(TestCase):
         response = self.client.delete("/users/user/")
         self.assertEqual(response.status_code, 204)
 
+    def test_current_user_unauthenticated(self):
+        """Test that unauthenticated users cannot get the current user."""
+        # Get the response from the API
+        response = self.client.get("/current_user/")
+        self.assertEqual(response.status_code, 401)
+
+    def test_current_user_authenticated(self):
+        """Test that authenticated users can get the current user."""
+        # Log in as the user
+        self.client.login(username="user", password="password")
+
+        # Get the response from the API
+        response = self.client.get("/current_user/")
+        self.assertEqual(response.status_code, 200)
+
+        # Check that private fields are returned
+        self.ensure_private_fields(response.data)
+
+        # Check that the user is the correct one
+        self.assertEqual(response.data['username'], "user")
+
+    def test_current_user_admin(self):
+        """Test that admins can get the current user."""
+        # Log in as the admin
+        self.client.login(username="admin", password="password")
+
+        # Get the response from the API
+        response = self.client.get("/current_user/")
+        self.assertEqual(response.status_code, 200)
+
+        # Check that private fields are returned
+        self.ensure_private_fields(response.data)
+
+        # Check that the user is the correct one
+        self.assertEqual(response.data['username'], "admin")
+
     def ensure_public_fields(self, user: dict) -> None:
         """Ensure that only public fields are returned."""
         # Check that only public fields are returned
