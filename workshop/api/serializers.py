@@ -23,7 +23,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         """Update an user."""
         # TODO: See if we can use view permissions to do this
         # Prevent non-staff users from adding themselves to groups
-        if not self.context['request'].user.is_superuser:
+        if not self.context['request'].user.is_superuser and\
+                'groups' in validated_data:
             # Get the groups the user is in
             user_groups = list(instance.groups.all())
 
