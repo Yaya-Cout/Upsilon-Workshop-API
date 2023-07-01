@@ -73,7 +73,7 @@ class GroupsTest(TestCase):
         self.assertEqual(response.status_code, 401)
 
         # Ensure that we can't update groups
-        response = self.client.put(
+        response = self.client.patch(
             "/groups/1/",
             {
                 "name": "Group 1 - Updated"
@@ -113,7 +113,7 @@ class GroupsTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
         # Ensure that we can't update groups
-        response = self.client.put(
+        response = self.client.patch(
             "/groups/1/",
             {
                 "name": "Group 1 - Updated"
@@ -156,7 +156,7 @@ class GroupsTest(TestCase):
         self.assertEqual(response.status_code, 201)
 
         # Ensure that we can update groups
-        response = self.client.put(
+        response = self.client.patch(
             "/groups/1/",
             {
                 "name": "Group 1 - Updated"
@@ -223,7 +223,7 @@ class GroupsUsersTest(TestCase):
 
         # Add the user to the group
         # TODO: Try to do this with patch
-        response = self.client.put(
+        response = self.client.patch(
             "/users/user/",
             {
                 "username": "user",
@@ -240,7 +240,7 @@ class GroupsUsersTest(TestCase):
     def test_groups_unauthenticated(self):
         """Test that unauthenticated users can only list groups."""
         # Ensure that we can't add users to groups
-        response = self.client.put(
+        response = self.client.patch(
             "/users/user/",
             {
                 "username": "user",
@@ -252,7 +252,7 @@ class GroupsUsersTest(TestCase):
         self.assertEqual(response.status_code, 401)
 
         # Ensure we can't remove users from groups
-        response = self.client.put(
+        response = self.client.patch(
             "/users/user/",
             {
                 "username": "user",
@@ -269,7 +269,7 @@ class GroupsUsersTest(TestCase):
         self.client.login(username="user", password="password")
 
         # Ensure that we can't add ourselves to groups
-        response = self.client.put(
+        response = self.client.patch(
             "/users/user/",
             {
                 "username": "user",
@@ -281,7 +281,7 @@ class GroupsUsersTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
         # Ensure that we can't add other users to groups
-        response = self.client.put(
+        response = self.client.patch(
             "/users/admin/",
             {
                 "username": "admin",
@@ -293,7 +293,7 @@ class GroupsUsersTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
         # Ensure we can't remove ourselves from groups
-        response = self.client.put(
+        response = self.client.patch(
             "/users/user/",
             {
                 "username": "user",
@@ -305,7 +305,7 @@ class GroupsUsersTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
         # Ensure we can't remove other users from groups
-        response = self.client.put(
+        response = self.client.patch(
             "/users/admin/",
             {
                 "username": "admin",
@@ -325,7 +325,7 @@ class GroupsUsersTest(TestCase):
         self.client.login(username="admin", password="password")
 
         # Ensure that we can add users to groups
-        response = self.client.put(
+        response = self.client.patch(
             "/users/user/",
             {
                 "username": "user",
@@ -337,7 +337,7 @@ class GroupsUsersTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Ensure that we can remove users from groups
-        response = self.client.put(
+        response = self.client.patch(
             "/users/user/",
             {
                 "username": "user",
@@ -349,7 +349,7 @@ class GroupsUsersTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Ensure that we can add ourselves to groups
-        response = self.client.put(
+        response = self.client.patch(
             "/users/admin/",
             {
                 "username": "admin",
@@ -361,7 +361,7 @@ class GroupsUsersTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Ensure that we can remove ourselves from groups
-        response = self.client.put(
+        response = self.client.patch(
             "/users/admin/",
             {
                 "username": "admin",

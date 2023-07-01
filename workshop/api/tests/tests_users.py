@@ -42,7 +42,7 @@ class UsersTest(TestCase):
             self.ensure_public_fields(user)
 
         # Edit an user
-        response = self.client.put(
+        response = self.client.patch(
             "/users/user/",
             {
                 "username": "user",
@@ -70,7 +70,7 @@ class UsersTest(TestCase):
         self.ensure_private_fields(user)
 
         # Edit the user
-        response = self.client.put(
+        response = self.client.patch(
             "/users/user/",
             {
                 "username": "user-edited",
@@ -82,7 +82,7 @@ class UsersTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Edit another user
-        response = self.client.put(
+        response = self.client.patch(
             "/users/admin/",
             {
                 "username": "admin-edited",
@@ -110,7 +110,7 @@ class UsersTest(TestCase):
             self.ensure_private_fields(user)
 
         # Edit our user
-        response = self.client.put(
+        response = self.client.patch(
             "/users/admin/",
             {
                 "username": "admin-edited",
@@ -122,7 +122,7 @@ class UsersTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Edit another user
-        response = self.client.put(
+        response = self.client.patch(
             "/users/user/",
             {
                 "username": "user-edited",
@@ -188,7 +188,7 @@ class UsersTest(TestCase):
     def test_users_edit_unauthenticated(self):
         """Test that unauthenticated users cannot edit users."""
         # Get the response from the API
-        response = self.client.put("/users/user/", self.user,
+        response = self.client.patch("/users/user/", self.user,
                                    content_type="application/json")
         self.assertEqual(response.status_code, 401)
 
@@ -199,7 +199,7 @@ class UsersTest(TestCase):
 
         ### Test that users can edit themselves
         # Get the response from the API
-        response = self.client.put("/users/user/", self.user,
+        response = self.client.patch("/users/user/", self.user,
                                    content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
@@ -211,8 +211,13 @@ class UsersTest(TestCase):
         self.assertEqual(response.data['email'], self.user['email'])
 
         ### Test that users cannot edit other users
+
+
+        # Log in again to get the updated user
+        self.client.login(username="user", password="password")
+
         # Get the response from the API
-        response = self.client.put("/users/admin/", self.admin,
+        response = self.client.patch("/users/admin/", self.admin,
                                    content_type="application/json")
         self.assertEqual(response.status_code, 403)
 
@@ -222,7 +227,7 @@ class UsersTest(TestCase):
         self.client.login(username="admin", password="password")
 
         # Get the response from the API
-        response = self.client.put("/users/user/", self.user, content_type="application/json")
+        response = self.client.patch("/users/user/", self.user, content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
         # Check that private fields are returned
@@ -238,7 +243,7 @@ class UsersTest(TestCase):
         self.client.login(username="user", password="password")
 
         # Get the response from the API
-        response = self.client.put("/users/100/", self.user)
+        response = self.client.patch("/users/100/", self.user)
         self.assertEqual(response.status_code, 404)
 
     def test_users_delete_unauthenticated(self):
