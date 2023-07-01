@@ -15,7 +15,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
         model = User
         fields = ['url', 'username', 'email', 'groups', 'scripts',
-                  'collaborations', 'ratings']
+                  'collaborations', 'ratings', 'password']
 
         read_only_fields = ['scripts', 'collaborations', 'ratings']
 
@@ -37,16 +37,28 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
                     "You can't add or remove yourself from groups"
                 )
 
+        # If the password is being updated, hash it
+        if 'password' in validated_data:
+            instance.set_password(validated_data['password'])
+            del validated_data['password']
+
         # If everything is OK, update the user
         return super(UserSerializer, self).update(instance, validated_data)
 
     # Show only public information about users if not the user themselves
     def to_representation(self, instance):
         """Show user information."""
-        # Allow staff users to see all information
+        # Allow staff users to see all information (except password)
         if instance == self.context['request'].user\
                 or self.context['request'].user.is_superuser:
-            return super(UserSerializer, self).to_representation(instance)
+            representation = super(UserSerializer, self)\
+                .to_representation(instance)
+
+            # Remove the password from the representation
+            representation.pop('password')
+
+            # Return the representation
+            return representation
 
         # Get the representation of the user
         representation = super(UserSerializer, self)\
