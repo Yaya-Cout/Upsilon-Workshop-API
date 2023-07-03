@@ -73,6 +73,11 @@ class ScriptsTest(TestCase):
                                    password=self.admin['password'])
         self.assertTrue(logged)
 
+        # Get the admin's url
+        response = self.client.get("/current_user/")
+        self.assertEqual(response.status_code, 200)
+        self.admin['url'] = response.data['url']
+
         # Create a script
         response = self.client.post(
             "/scripts/",
@@ -319,6 +324,12 @@ class ScriptsTest(TestCase):
             content_type="application/json"
         )
         self.assertEqual(response.status_code, 200)
+
+        # Get the script again to check the author
+        response = self.client.get(self.admin_script['url'])
+
+        # Ensure the author is still the admin
+        self.assertEqual(response.data['author'], self.admin['url'])
 
         # Ensure we can't delete the script
         response = self.client.delete(self.admin_script['url'])
