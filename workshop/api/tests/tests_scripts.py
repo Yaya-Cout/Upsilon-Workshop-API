@@ -48,7 +48,8 @@ class ScriptsTest(TestCase):
             "views",
             "id",
             "tags",
-            "is_public"
+            "is_public",
+            "runner"
         ]
 
         # Register a user
@@ -673,6 +674,46 @@ class ScriptsTest(TestCase):
             },
             content_type="application/json"
         )
+        self.assertEqual(response.status_code, 400)
+
+        # Check using a valid runner
+        response = self.client.post(
+            "/scripts/",
+            {
+                "name": "test",
+                "language": "python",
+                "runner": "parisse-with-xcas",
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    }
+                ]
+            },
+            content_type="application/json"
+        )
+
+        # Check that the script was created
+        self.assertEqual(response.status_code, 201)
+
+        # Check using an invalid runner
+        response = self.client.post(
+            "/scripts/",
+            {
+                "name": "test",
+                "language": "python",
+                "runner": "invalid",
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    }
+                ]
+            },
+            content_type="application/json"
+        )
+
+        # Check that the script was not created
         self.assertEqual(response.status_code, 400)
 
     def create_script_with_file_name(self, file_name, expected_status_code):

@@ -16,6 +16,11 @@ ALLOWED_LANGUAGES = [
     'xcas-session'
 ]
 
+ALLOWED_RUNNERS = [
+    "default",
+    "parisse-with-xcas",
+]
+
 # Max script size is 100 KB
 MAX_SCRIPT_SIZE = 100 * 1024
 
@@ -34,6 +39,15 @@ def validate_email(value):
     if '@' not in value:
         raise ValidationError(
             _('%(value)s is not a valid email address'),
+            params={'value': value},
+        )
+
+
+def validate_runner(value):
+    """Validate the runner of a script."""
+    if value not in ALLOWED_RUNNERS:
+        raise ValidationError(
+            _('%(value)s is not a valid runner'),
             params={'value': value},
         )
 

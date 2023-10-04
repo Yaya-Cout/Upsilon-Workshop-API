@@ -10,7 +10,7 @@ from django.contrib.auth.models import AbstractUser
 import uuid
 
 # Import the validators from the validators.py file
-from workshop.api.validators import validate_language, validate_email, validate_script_files, URLUsernameValidator
+from workshop.api.validators import validate_language, validate_email, validate_runner, validate_script_files, URLUsernameValidator
 
 # Max file size is 100 KB
 MAX_FILE_SIZE = 100 * 1024
@@ -214,6 +214,12 @@ class Script(UUIDModel):
 
     # The visibility of the script
     is_public = models.BooleanField(default=True)
+
+    # The simulator to run the project with (possible values : default (Upsilon),
+    # parisse-with-xcas)
+    runner = models.CharField(
+        max_length=100, default='default', validators=[validate_runner]
+    )
 
     # TODO: Add a field for compatibles machines
     # TODO: Add a field for size of the script
