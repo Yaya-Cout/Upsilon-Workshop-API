@@ -324,7 +324,7 @@ class UsersTest(TestCase):
     def ensure_private_fields(self, user: dict) -> None:
         """Ensure that private fields are returned."""
         # Check that private fields are returned
-        self.assertEqual(len(user), 7)
+        self.assertEqual(len(user), 8)
         self.assertIn("url", user)
         self.assertIn("collaborations", user)
         self.assertIn("username", user)
@@ -332,3 +332,4 @@ class UsersTest(TestCase):
         self.assertIn("groups", user)
         self.assertIn("scripts", user)
         self.assertIn("ratings", user)
+        self.assertIn("warning_private_project", user)

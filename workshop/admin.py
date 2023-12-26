@@ -49,7 +49,9 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    pass
+    list_display = BaseUserAdmin.list_display + ('warning_private_project',)
+    fieldsets = BaseUserAdmin.fieldsets + (('Moderation', {
+        "fields": ('warning_private_project',)}),)
 
 # This syntax is easier to write, but it doesn't work with the search and filter
 # fields

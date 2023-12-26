@@ -28,6 +28,14 @@ class User(AbstractUser):
     # Remove the id field
     id = None
 
+    # Field to store whether to warn user about the existence of the private
+    # projects
+    warning_private_project = models.BooleanField(
+        default=False,
+        help_text="This field specify wether the user should be informed about"
+                  " the existence of the private projects"
+    )
+
     # The username is the primary key
     username = models.CharField(
         _("username"),

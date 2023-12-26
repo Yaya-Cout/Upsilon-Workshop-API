@@ -15,7 +15,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
         model = User
         fields = ['url', 'username', 'email', 'groups', 'scripts',
-                  'collaborations', 'ratings', 'password']
+                  'collaborations', 'ratings', 'password',
+                  'warning_private_project']
 
         read_only_fields = ['scripts', 'collaborations', 'ratings']
 
