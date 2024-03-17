@@ -159,3 +159,19 @@ class CurrentUserView(APIView):
         """
         serializer = UserSerializer(request.user, context={'request': request})
         return Response(serializer.data)
+
+
+class ScriptStatsView(APIView):
+    """
+    API endpoint to get stats about the scripts.
+    """
+    def get(self, request) -> Response:
+        """
+        Return the project stats.
+        """
+        public_projects = Script.objects.filter(is_public=True).count()
+        total_projects = Script.objects.count()
+        return Response({
+            "public_projects": public_projects,
+            "total_projects": total_projects
+        })

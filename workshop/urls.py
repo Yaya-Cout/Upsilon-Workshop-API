@@ -28,6 +28,7 @@ urlpatterns = [
     path('admin/doc/', include('django.contrib.admindocs.urls')),
     path("admin/", admin.site.urls),
     path("current_user/", views.CurrentUserView.as_view()),
+    path("scripts_stats/", views.ScriptStatsView.as_view()),
 ]
 
 router = routers.DefaultRouter()

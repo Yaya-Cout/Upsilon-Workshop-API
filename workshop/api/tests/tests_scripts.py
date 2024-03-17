@@ -829,7 +829,7 @@ class ScriptsTest(TestCase):
         # Log in as the other user
         self.client.logout()
         self.client.login(username=self.user2['username'],
-                            password=self.user2['password'])
+                          password=self.user2['password'])
 
         # Get the script and check that it is visible
         response = self.client.get(private_script)
@@ -840,7 +840,6 @@ class ScriptsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(private_script, [script['url'] for script in
                                        response.data['results']])
-
 
     def ensure_list_valid(self) -> dict:
         """Ensure that the list of scripts is valid and return it."""
@@ -860,5 +859,50 @@ class ScriptsTest(TestCase):
 
         # Return the result
         return result
+
+    def test_scripts_stats(self):
+        """Test that unauthenticated users can only list public scripts."""
+        # Log in as the user
+        self.client.login(username=self.user['username'],
+                          password=self.user['password'])
+
+        # Create a private script
+        response = self.client.post(
+            "/scripts/",
+            {
+                "name": "private_script",
+                "language": "python",
+                "files": [
+                    {
+                        "name": "test.py",
+                        "content": "print('Hello, world!')"
+                    }
+                ],
+                "is_public": False
+            },
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 201)
+
+        # Get the stats
+        result = self.client.get("/scripts_stats/")
+
+        # Check the return code
+        self.assertEqual(result.status_code, 200)
+
+        self.assertEqual(result.data, {
+            "public_projects": 2, "total_projects": 3})
+
+        # Logout and check the data is the same
+        self.client.logout()
+
+        # Get the stats
+        result = self.client.get("/scripts_stats/")
+
+        # Check the return code
+        self.assertEqual(result.status_code, 200)
+
+        self.assertEqual(result.data, {
+            "public_projects": 2, "total_projects": 3})
 
     # TODO: Test script download and views when they are implemented
