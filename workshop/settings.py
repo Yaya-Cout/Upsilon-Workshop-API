@@ -169,13 +169,11 @@ STATIC_URL = "/static/"
 if os.environ.get("CSRF_TRUSTED_ORIGINS"):
     CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(";")
 else:
-    if not DEBUG:
-        raise ValueError("CSRF_TRUSTED_ORIGINS is not set")
-    else:
-        CSRF_TRUSTED_ORIGINS = [
-            "https://django-cdqivkhudi9mmk5gqgb0.apps.playground.napptive.dev",
-            "https://yann.n1n1.xyz"
-        ]
+    print("Warning : CSRF_TRUSTED_ORIGINS is not set")
+    CSRF_TRUSTED_ORIGINS = [
+        "https://django-cdqivkhudi9mmk5gqgb0.apps.playground.napptive.dev",
+        "https://yann.n1n1.xyz"
+    ]
 
 CSRF_COOKIE_SECURE = True
 
