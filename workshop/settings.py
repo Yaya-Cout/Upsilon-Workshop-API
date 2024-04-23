@@ -164,11 +164,19 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = "/static/"
 
-# CSRF trusted origins (endpoint url for the API and the frontend)
-CSRF_TRUSTED_ORIGINS = [
-    "https://django-cdqivkhudi9mmk5gqgb0.apps.playground.napptive.dev",
-    "https://yann.n1n1.xyz"
-]
+# CSRF trusted origins (primary used by Django and DRF login page)
+# Example : CSRF_TRUSTED_ORIGINS="https://yann.n1n1.xyz;https://apiv1.upsilon.yann.n1n1.xyz"
+if os.environ.get("CSRF_TRUSTED_ORIGINS"):
+    CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(";")
+else:
+    if not DEBUG:
+        raise ValueError("CSRF_TRUSTED_ORIGINS is not set")
+    else:
+        CSRF_TRUSTED_ORIGINS = [
+            "https://django-cdqivkhudi9mmk5gqgb0.apps.playground.napptive.dev",
+            "https://yann.n1n1.xyz"
+        ]
+
 CSRF_COOKIE_SECURE = True
 
 # Default primary key field type
@@ -209,12 +217,20 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
 }
 
-# CORS settings
-CORS_ORIGIN_REGEX_WHITELIST = [
-    r"https?://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):3000",
-    r"https?://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):5173",
-    "https://yaya-cout.github.io",
-]
+# CORS settings (control which frontend are allowed on web browsers)
+# If CORS_ALLOW_ALL_ORIGINS is set, we allow everything
+if os.environ.get("CORS_ALLOW_ALL_ORIGINS"):
+    CORS_ALLOW_ALL_ORIGINS = True
+elif os.environ.get("CORS_ORIGIN_REGEX_WHITELIST"):
+    CORS_ORIGIN_REGEX_WHITELIST = os.environ.get(
+        "CORS_ORIGIN_REGEX_WHITELIST").split(";")
+else:
+    print("Warning : Default CORS settings used")
+    CORS_ORIGIN_REGEX_WHITELIST = [
+        r"https?://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):3000",
+        r"https?://(?:(?:127|0)\.0\.0\.(?:0|1)|localhost):5173",
+        "https://yaya-cout.github.io",
+    ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
