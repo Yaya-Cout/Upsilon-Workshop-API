@@ -65,7 +65,9 @@ class ScriptViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        Script.objects.filter(pk=instance.id).update(views=instance.views + 1)
+        if request.query_params.get('skip_view', '') != "1":
+            Script.objects.filter(pk=instance.id).update(
+                views=instance.views + 1)
         return super(ScriptViewSet, self).retrieve(request, *args, **kwargs)
 
     def get_queryset(self):
