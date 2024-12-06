@@ -1,5 +1,5 @@
 # Server dependencies
-django==4.2.16
+django==4.2.17
 django-filter
 markdown
 djangorestframework
