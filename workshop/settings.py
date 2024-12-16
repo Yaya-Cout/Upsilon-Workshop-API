@@ -171,7 +171,6 @@ if os.environ.get("CSRF_TRUSTED_ORIGINS"):
 else:
     print("Warning : CSRF_TRUSTED_ORIGINS is not set")
     CSRF_TRUSTED_ORIGINS = [
-        "https://django-cdqivkhudi9mmk5gqgb0.apps.playground.napptive.dev",
         "https://yann.n1n1.xyz"
     ]
 

@@ -21,8 +21,8 @@ ALLOWED_RUNNERS = [
     "parisse-with-xcas",
 ]
 
-# Max script size is 100 KB
-MAX_SCRIPT_SIZE = 100 * 1024
+# Max script size is 1 MiB
+MAX_SCRIPT_SIZE = 1024 * 1024
 
 
 def validate_language(value):
