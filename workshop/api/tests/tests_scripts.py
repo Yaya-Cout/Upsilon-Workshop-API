@@ -659,11 +659,11 @@ class ScriptsTest(TestCase):
         ]
 
         # Generate the content that is too big based on the payload size
-        content = "a" * (100 * 1024 - len(json.dumps(files)) + 1)
+        content = "a" * (1024 * 1024 - len(json.dumps(files)) + 1)
         files[0]['content'] = content
 
         # Assert that the payload is the correct size
-        self.assertEqual(len(json.dumps(files)), 100 * 1024 + 1)
+        self.assertEqual(len(json.dumps(files)), 1024 * 1024 + 1)
 
         response = self.client.post(
             "/scripts/",
