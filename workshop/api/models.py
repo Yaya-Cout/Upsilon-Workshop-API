@@ -67,10 +67,18 @@ class Char32UUIDField(models.UUIDField):
         return value
 
 
+# Needed for https://www.albertyw.com/note/django-5-mariadb-uuidfield
+class RealUUIDField(models.UUIDField):
+    def db_type(self, connection):
+        return "uuid"
+
+
 class UUIDModel(models.Model):
     """Abstract model that uses UUIDs as primary keys."""
 
-    id = Char32UUIDField(default=uuid.uuid4, editable=False, unique=True,
+    # id = RealUUIDField(default=uuid.uuid4, editable=False, unique=True,
+    #                       primary_key=True, verbose_name='UUID')
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True,
                           primary_key=True, verbose_name='UUID')
 
     class Meta:
