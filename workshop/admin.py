@@ -15,7 +15,7 @@ class ScriptAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'author', 'created', 'modified', 'is_public', 'views')
     list_filter = ('created', 'modified', 'is_public', 'language', 'compatibility', 'author')
-    search_fields = ('name', 'description', 'files', 'licence', 'version', 'language', 'author__username', 'compatibility__name')
+    search_fields = ('name', 'long_description', 'short_description', 'files', 'licence', 'version', 'language', 'author__username', 'compatibility__name', 'tags__name', 'id')
     ordering = ('-created',)
 
 
