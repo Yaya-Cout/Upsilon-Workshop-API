@@ -67,7 +67,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             .to_representation(instance)
 
         # Remove private scripts querying the database with a filter
-        queryset = Script.objects.filter(author=instance, is_public=True)
+        queryset = Script.objects.filter(author=instance, is_public=True,
+                                         is_unlisted=False)
         queryset |= Script.objects.filter(
             author=instance,
             collaborators=self.context['request'].user
@@ -83,7 +84,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
         # Remove private collaborations querying the database with a filter
         queryset = Script.objects.filter(collaborators=instance,
-                                         is_public=True)
+                                         is_public=True, is_unlisted=False)
         queryset |= Script.objects.filter(
             collaborators=instance,
             author=self.context['request'].user
