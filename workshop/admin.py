@@ -13,8 +13,8 @@ admin.site.site_header = "Workshop administration"
 class ScriptAdmin(admin.ModelAdmin):
     """Admin class for the Script model."""
 
-    list_display = ('name', 'author', 'created', 'modified', 'is_public', 'views')
-    list_filter = ('created', 'modified', 'is_public', 'language', 'compatibility', 'author')
+    list_display = ('name', 'author', 'created', 'modified', 'is_public', 'is_unlisted', 'views')
+    list_filter = ('created', 'modified', 'is_public', 'is_unlisted', 'language', 'compatibility', 'author')
     search_fields = ('name', 'long_description', 'short_description', 'files', 'licence', 'version', 'language', 'author__username', 'compatibility__name', 'tags__name', 'id')
     ordering = ('-created',)
 
