@@ -78,6 +78,16 @@ class ScriptViewSet(viewsets.ModelViewSet):
         # Get public scripts
         queryset = Script.objects.filter(is_public=True)
 
+        # If the user selected a specific project, return only this one (
+        # prevent bugs in Django REST Framework from letting users see others
+        # scripts in case someone is able to inject pk without it being
+        # interpreted by DRF)
+        if "pk" in self.kwargs:
+            queryset = queryset.filter(id=self.kwargs['pk'])
+        else:
+            # Hide unlisted projects otherwise, as we are on the project list
+            queryset = queryset.filter(is_unlisted=False)
+
         # If the user is authenticated, get their private scripts too
         if self.request.user.is_authenticated:
             queryset = queryset | Script.objects.filter(

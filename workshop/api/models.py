@@ -242,6 +242,11 @@ class Script(UUIDModel):
     # The visibility of the script
     is_public = models.BooleanField(default=True)
 
+    # Weather the project is visible in the project list for unauthenticated
+    # users (collaborators and creator can still see it). Only useful with
+    # is_public set to True
+    is_unlisted = models.BooleanField(default=False)
+
     # The simulator to run the project with (possible values : default (Upsilon),
     # parisse-with-xcas)
     runner = models.CharField(
